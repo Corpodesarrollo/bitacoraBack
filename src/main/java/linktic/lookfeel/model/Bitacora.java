@@ -22,7 +22,7 @@ public class Bitacora {
 	    @Column(name="ID")
 	    private Long id;
 		
-		@Column(name="FE_REG")
+		@Column(name="FECHA_REGISTRO")
 	    private LocalDateTime fechaRegistro;
 		
 		@Column(name="USUARIO")
@@ -34,13 +34,13 @@ public class Bitacora {
 		@Column(name="SUBMODULO")
 	    private Long submodulo;
 		
-		@Column(name="T_LOG")
+		@Column(name="TIPO_LOG_BITACORA")
 	    private Long tipoLog;
 		
-		@Column(name="COL")
+		@Column(name="COLEGIO")
 	    private Long colegio;
 		
-		@Column(name="JORN")
+		@Column(name="JORNADA")
 	    private Long jornada;
 		
 		@Column(name="SEDE")
@@ -49,7 +49,7 @@ public class Bitacora {
 		@Column(name="PERFIL")
 	    private Long perfil;
 		
-		@Column(name="DESCR",length = 250)
+		@Column(name="DESCRIPCION",length = 250)
 	    private String descripcion;
 
 		public Long getId() {

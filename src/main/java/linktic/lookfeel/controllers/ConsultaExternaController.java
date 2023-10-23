@@ -86,4 +86,9 @@ public class ConsultaExternaController {
 	public Response insertarBitacora(BitacoraDto bitacora) {
 		return iBitacoraService.insertarBitacora(bitacora);
 	}
+	
+	@GetMapping(value = "/tipoLog", produces = "application/json")
+	public Response consultarTipoLogsBitacora() {
+		return iBitacoraService.obtenerTipoLog();
+	}
 }

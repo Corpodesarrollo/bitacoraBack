@@ -6,4 +6,6 @@ import linktic.lookfeel.model.Response;
 public interface IBitacoraService {
 
 	Response insertarBitacora(BitacoraDto bitacora);
+	
+	Response obtenerTipoLog();
 }
