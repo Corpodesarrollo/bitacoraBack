@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import linktic.lookfeel.dtos.BitacoraDto;
+import linktic.lookfeel.dtos.ColegioFiltroDto;
 import linktic.lookfeel.dtos.ConstanteDto;
 import linktic.lookfeel.dtos.UsuarioFiltroDto;
 import linktic.lookfeel.model.Response;
@@ -99,5 +100,8 @@ public class ConsultaExternaController {
 		return iBitacoraService.obtenerUsuarios(usuarioFiltro);
 	}
 	
-	
+	@PostMapping(value = "/Colegios", produces = "application/json")
+	public Response consultarColegios(@RequestBody(required = true) ColegioFiltroDto colegioFiltro) {
+		return iBitacoraService.obtenerColegios(colegioFiltro);
+	}
 }

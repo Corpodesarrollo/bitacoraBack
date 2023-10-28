@@ -8,13 +8,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import linktic.lookfeel.dtos.BitacoraDto;
+import linktic.lookfeel.dtos.ColegioFiltroDto;
 import linktic.lookfeel.dtos.TipoLogDto;
 import linktic.lookfeel.dtos.UsuarioFiltroDto;
 import linktic.lookfeel.model.Bitacora;
+import linktic.lookfeel.model.Institucion;
 import linktic.lookfeel.model.Personal;
 import linktic.lookfeel.model.Response;
 import linktic.lookfeel.model.TipoLog;
 import linktic.lookfeel.model.Usuario;
+import linktic.lookfeel.repositories.InstitucionRepository;
 import linktic.lookfeel.repositories.PersonalRepository;
 import linktic.lookfeel.security.repositories.BitacoraRepository;
 import linktic.lookfeel.security.repositories.TipoLogRepository;
@@ -36,12 +39,15 @@ public class BitacoraService implements IBitacoraService{
 	private final TipoLogRepository tipoLogBitacoraRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final PersonalRepository personalRepository;
+	private final InstitucionRepository institucionRepository;
 
-    BitacoraService(BitacoraRepository bitacoraRepository,TipoLogRepository tipoLogBitacoraRepository,UsuarioRepository usuarioRepository,PersonalRepository personalRepository) {
+    BitacoraService(BitacoraRepository bitacoraRepository,TipoLogRepository tipoLogBitacoraRepository,UsuarioRepository usuarioRepository,PersonalRepository personalRepository,
+    		InstitucionRepository institucionRepository) {
         this.bitacoraRepository = bitacoraRepository;
         this.tipoLogBitacoraRepository = tipoLogBitacoraRepository;
         this.usuarioRepository = usuarioRepository;
         this.personalRepository = personalRepository;
+        this.institucionRepository = institucionRepository;
     }	
 
 	@Override
@@ -98,5 +104,22 @@ public class BitacoraService implements IBitacoraService{
 		}
 		
 		return new Response(HttpStatus.OK.value(), "Usuarios consultados correctamente", personal);
+	}
+
+	@Override
+	public Response obtenerColegios(ColegioFiltroDto colegio) {
+		int nivelPerfil = usuarioRepository.nivelUsuario(colegio.getUsuario());
+		long localidad = usuarioRepository.localidadUsuario(colegio.getUsuario());
+		long institucion = usuarioRepository.institucionUsuario(colegio.getUsuario());
+		
+		List<Institucion> colegios = new ArrayList<>();
+		
+		if(nivelPerfil ==1) {
+			colegios = institucionRepository.findByLocalidadInstitucions(localidad);
+		}else if(nivelPerfil ==6){
+			colegios.add(institucionRepository.findByCodigo(institucion));
+		}
+		
+		return new Response(HttpStatus.OK.value(), "Colegios consultados correctamente", colegios);
 	}
 }
