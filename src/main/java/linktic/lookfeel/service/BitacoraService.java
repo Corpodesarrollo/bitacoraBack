@@ -9,16 +9,19 @@ import org.springframework.stereotype.Service;
 
 import linktic.lookfeel.dtos.BitacoraDto;
 import linktic.lookfeel.dtos.ColegioFiltroDto;
+import linktic.lookfeel.dtos.SedeFiltroDto;
 import linktic.lookfeel.dtos.TipoLogDto;
 import linktic.lookfeel.dtos.UsuarioFiltroDto;
 import linktic.lookfeel.model.Bitacora;
 import linktic.lookfeel.model.Institucion;
 import linktic.lookfeel.model.Personal;
 import linktic.lookfeel.model.Response;
+import linktic.lookfeel.model.Sede;
 import linktic.lookfeel.model.TipoLog;
 import linktic.lookfeel.model.Usuario;
 import linktic.lookfeel.repositories.InstitucionRepository;
 import linktic.lookfeel.repositories.PersonalRepository;
+import linktic.lookfeel.repositories.SedeRepository;
 import linktic.lookfeel.security.repositories.BitacoraRepository;
 import linktic.lookfeel.security.repositories.TipoLogRepository;
 import linktic.lookfeel.security.repositories.UsuarioRepository;
@@ -40,14 +43,16 @@ public class BitacoraService implements IBitacoraService{
 	private final UsuarioRepository usuarioRepository;
 	private final PersonalRepository personalRepository;
 	private final InstitucionRepository institucionRepository;
+	private final SedeRepository sedeRepository;
 
     BitacoraService(BitacoraRepository bitacoraRepository,TipoLogRepository tipoLogBitacoraRepository,UsuarioRepository usuarioRepository,PersonalRepository personalRepository,
-    		InstitucionRepository institucionRepository) {
+    		InstitucionRepository institucionRepository,SedeRepository sedeRepository) {
         this.bitacoraRepository = bitacoraRepository;
         this.tipoLogBitacoraRepository = tipoLogBitacoraRepository;
         this.usuarioRepository = usuarioRepository;
         this.personalRepository = personalRepository;
         this.institucionRepository = institucionRepository;
+        this.sedeRepository = sedeRepository;
     }	
 
 	@Override
@@ -121,5 +126,13 @@ public class BitacoraService implements IBitacoraService{
 		}
 		
 		return new Response(HttpStatus.OK.value(), "Colegios consultados correctamente", colegios);
+	}
+
+	@Override
+	public Response obtenerSedes(SedeFiltroDto colegio) {
+		// TODO Auto-generated method stub
+		List<Sede> sedes = sedeRepository.findSedeByInstitucion(colegio.getColegio());
+		
+		return new Response(HttpStatus.OK.value(), "Sedes consultadas correctamente", sedes);
 	}
 }
