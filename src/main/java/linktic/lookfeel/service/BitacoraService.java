@@ -1,5 +1,6 @@
 package linktic.lookfeel.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +10,15 @@ import org.springframework.stereotype.Service;
 
 import linktic.lookfeel.dtos.BitacoraDto;
 import linktic.lookfeel.dtos.ColegioFiltroDto;
+import linktic.lookfeel.dtos.JornadaDTO;
+import linktic.lookfeel.dtos.JornadaFiltroDto;
 import linktic.lookfeel.dtos.SedeFiltroDto;
 import linktic.lookfeel.dtos.TipoLogDto;
 import linktic.lookfeel.dtos.UsuarioFiltroDto;
 import linktic.lookfeel.model.Bitacora;
+import linktic.lookfeel.model.Constante;
 import linktic.lookfeel.model.Institucion;
+import linktic.lookfeel.model.Jornada;
 import linktic.lookfeel.model.Personal;
 import linktic.lookfeel.model.Response;
 import linktic.lookfeel.model.Sede;
@@ -135,4 +140,25 @@ public class BitacoraService implements IBitacoraService{
 		
 		return new Response(HttpStatus.OK.value(), "Sedes consultadas correctamente", sedes);
 	}
+
+	@Override
+	public Response obtenerJornadas(JornadaFiltroDto colegio) {
+		// TODO Auto-generated method stub
+		List<Object[]> jornadasObj = new ArrayList<>();
+		List<JornadaDTO> jornadas = new ArrayList<>();
+		JornadaDTO jornada;
+		jornadasObj = sedeRepository.findJornadasBySede(colegio.getSede());
+		
+		for(int i=0;i<jornadasObj.size();i++) {
+			Object[] obj = jornadasObj.get(i);
+			jornada = new JornadaDTO();
+			jornada.setId(((BigDecimal) obj[0]).longValue());
+			jornada.setNombre(obj[1].toString());
+			jornadas.add(jornada);
+ 		}
+		
+		return new Response(HttpStatus.OK.value(), "Jornadas consultadas correctamente", jornadas);
+	}
+	
+	
 }
