@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import linktic.lookfeel.model.Personal;
+import linktic.lookfeel.model.Usuario;
 
 /**
  *
@@ -58,6 +59,12 @@ public interface PersonalRepository extends JpaRepository<Personal, Long> {
 			+ "        AND (:localidadId IS NULL OR INSTR(NVL( i.inscodlocal ,''), :localidadId )>0)\r\n"
 			+ "        AND gc.g_contipo=5)")
 	List<String> findByPersonalPorPerfil(String perfilId, String colegioId, String localidadId, String sedeId, String jornadaId);
+
+    @Query(nativeQuery = true, value = "select p.* from personal p"
+    		+ "join usuario u on p.pernumdocum = u.usulogin\n" +
+            "join g_jerarquia gjer on gjer.g_jercodigo = usucodjerar\n" +
+            "where g_jerinst= :codInstitucion")
+    List<Personal> getUsuarioXInstutucion(int codInstitucion);
 
 	
 }

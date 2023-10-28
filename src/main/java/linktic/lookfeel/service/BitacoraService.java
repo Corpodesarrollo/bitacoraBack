@@ -9,11 +9,16 @@ import org.springframework.stereotype.Service;
 
 import linktic.lookfeel.dtos.BitacoraDto;
 import linktic.lookfeel.dtos.TipoLogDto;
+import linktic.lookfeel.dtos.UsuarioFiltroDto;
 import linktic.lookfeel.model.Bitacora;
+import linktic.lookfeel.model.Personal;
 import linktic.lookfeel.model.Response;
 import linktic.lookfeel.model.TipoLog;
+import linktic.lookfeel.model.Usuario;
+import linktic.lookfeel.repositories.PersonalRepository;
 import linktic.lookfeel.security.repositories.BitacoraRepository;
 import linktic.lookfeel.security.repositories.TipoLogRepository;
+import linktic.lookfeel.security.repositories.UsuarioRepository;
 
 /**
 *
@@ -29,10 +34,14 @@ public class BitacoraService implements IBitacoraService{
 
 	private final BitacoraRepository bitacoraRepository;
 	private final TipoLogRepository tipoLogBitacoraRepository;
+	private final UsuarioRepository usuarioRepository;
+	private final PersonalRepository personalRepository;
 
-    BitacoraService(BitacoraRepository bitacoraRepository,TipoLogRepository tipoLogBitacoraRepository) {
+    BitacoraService(BitacoraRepository bitacoraRepository,TipoLogRepository tipoLogBitacoraRepository,UsuarioRepository usuarioRepository,PersonalRepository personalRepository) {
         this.bitacoraRepository = bitacoraRepository;
         this.tipoLogBitacoraRepository = tipoLogBitacoraRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.personalRepository = personalRepository;
     }	
 
 	@Override
@@ -75,5 +84,19 @@ public class BitacoraService implements IBitacoraService{
 		}
 		
 		return new Response(HttpStatus.OK.value(), "tipos de log consultados correctamente", respuesta);
+	}
+
+	@Override
+	public Response obtenerUsuarios(UsuarioFiltroDto usuario) {
+		List<Personal> personal=new ArrayList<>();
+		
+		if(usuario.getNivelPerfil()==6) {
+			personal = personalRepository.getUsuarioXInstutucion(usuario.getInstitucion());
+		}
+		else if(usuario.getNivelPerfil()==1 && usuario.getPerfil()==110) {
+			personal = personalRepository.findAll();
+		}
+		
+		return new Response(HttpStatus.OK.value(), "Usuarios consultados correctamente", personal);
 	}
 }

@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import linktic.lookfeel.dtos.BitacoraDto;
 import linktic.lookfeel.dtos.ConstanteDto;
+import linktic.lookfeel.dtos.UsuarioFiltroDto;
 import linktic.lookfeel.model.Response;
 import linktic.lookfeel.service.ConstanteService;
 import linktic.lookfeel.service.IBitacoraService;
@@ -83,7 +85,7 @@ public class ConsultaExternaController {
 	}
 
 	@PostMapping(value = "/insertarBitacora", produces = "application/json")
-	public Response insertarBitacora(BitacoraDto bitacora) {
+	public Response insertarBitacora(@RequestBody(required = true) BitacoraDto bitacora) {
 		return iBitacoraService.insertarBitacora(bitacora);
 	}
 	
@@ -91,4 +93,11 @@ public class ConsultaExternaController {
 	public Response consultarTipoLogsBitacora() {
 		return iBitacoraService.obtenerTipoLog();
 	}
+	
+	@PostMapping(value = "/Usuarios", produces = "application/json")
+	public Response consultarUsuarios(@RequestBody(required = true) UsuarioFiltroDto usuarioFiltro) {
+		return iBitacoraService.obtenerUsuarios(usuarioFiltro);
+	}
+	
+	
 }
