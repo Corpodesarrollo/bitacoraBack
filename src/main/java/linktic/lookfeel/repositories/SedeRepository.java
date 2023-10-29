@@ -74,7 +74,7 @@ public interface SedeRepository extends JpaRepository<Sede,Long>{
 			+ "and se.sedcodigo = :codigoSede")
 	Sede sedePorCodigoInstYCodigoSede(Long codigoSede, Long codigoInstitucion);
 	
-	@Query(nativeQuery = true, value = "select gc.g_concodigo,gc.g_connombre from jornada j\r\n"
+	@Query(nativeQuery = true, value = "select distinct sj.SEDJORCODJOR,gc.g_connombre from jornada j\r\n"
 			+ "join sede_jornada sj on sj.sedjorcodjor = j.jorcodigo \r\n"
 			+ "join sede s on sj.sedjorcodsede = s.sedcodigo \r\n"
 			+ "join g_constante gc on j.jorcodigo = gc.g_concodigo and gc.g_contipo = 5 "

@@ -1,6 +1,7 @@
 package linktic.lookfeel.service;
 
 import linktic.lookfeel.dtos.BitacoraDto;
+import linktic.lookfeel.dtos.BitacoraFiltroDto;
 import linktic.lookfeel.dtos.ColegioFiltroDto;
 import linktic.lookfeel.dtos.JornadaFiltroDto;
 import linktic.lookfeel.dtos.SedeFiltroDto;
@@ -19,5 +20,7 @@ public interface IBitacoraService {
 
 	Response obtenerSedes(SedeFiltroDto colegio);
 	
-	Response obtenerJornadas(JornadaFiltroDto colegio);
+	Response obtenerJornadas(JornadaFiltroDto jornada);
+	
+	Response obtenerBitacora(BitacoraFiltroDto bitacora);
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import linktic.lookfeel.dtos.BitacoraDto;
+import linktic.lookfeel.dtos.BitacoraFiltroDto;
 import linktic.lookfeel.dtos.ColegioFiltroDto;
 import linktic.lookfeel.dtos.ConstanteDto;
 import linktic.lookfeel.dtos.JornadaFiltroDto;
@@ -115,5 +116,10 @@ public class ConsultaExternaController {
 	@PostMapping(value = "/Jornadas", produces = "application/json")
 	public Response consultarJornadas(@RequestBody(required = true) JornadaFiltroDto sedeFiltro) {
 		return iBitacoraService.obtenerJornadas(sedeFiltro);
+	}
+	
+	@PostMapping(value = "/Bitacora", produces = "application/json")
+	public Response consultarBitacora(@RequestBody(required = true) BitacoraFiltroDto bitacoraFiltro) {
+		return iBitacoraService.obtenerBitacora(bitacoraFiltro);
 	}
 }

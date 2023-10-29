@@ -5,10 +5,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import linktic.lookfeel.dtos.BitacoraDto;
+import linktic.lookfeel.dtos.BitacoraFiltroDto;
 import linktic.lookfeel.dtos.ColegioFiltroDto;
 import linktic.lookfeel.dtos.JornadaDTO;
 import linktic.lookfeel.dtos.JornadaFiltroDto;
@@ -24,10 +28,10 @@ import linktic.lookfeel.model.Response;
 import linktic.lookfeel.model.Sede;
 import linktic.lookfeel.model.TipoLog;
 import linktic.lookfeel.model.Usuario;
+import linktic.lookfeel.repositories.BitacoraRepository;
 import linktic.lookfeel.repositories.InstitucionRepository;
 import linktic.lookfeel.repositories.PersonalRepository;
 import linktic.lookfeel.repositories.SedeRepository;
-import linktic.lookfeel.security.repositories.BitacoraRepository;
 import linktic.lookfeel.security.repositories.TipoLogRepository;
 import linktic.lookfeel.security.repositories.UsuarioRepository;
 
@@ -43,7 +47,9 @@ import linktic.lookfeel.security.repositories.UsuarioRepository;
 @Service
 public class BitacoraService implements IBitacoraService{
 
+	@Autowired
 	private final BitacoraRepository bitacoraRepository;
+	
 	private final TipoLogRepository tipoLogBitacoraRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final PersonalRepository personalRepository;
@@ -158,6 +164,17 @@ public class BitacoraService implements IBitacoraService{
  		}
 		
 		return new Response(HttpStatus.OK.value(), "Jornadas consultadas correctamente", jornadas);
+	}
+
+	@Override
+	public Response obtenerBitacora(BitacoraFiltroDto bitacora) {
+		// TODO Auto-generated method stub
+		Pageable page = PageRequest.of(bitacora.getPaginaActual(), bitacora.getItemsPagina());
+		String descripcion = "%"+bitacora.getDescripcion()+"%";
+		List<Bitacora> bitacoras = bitacoraRepository.consultaBitacora(bitacora.getFechaInicio(), bitacora.getFechaFin(), bitacora.getUsuario(), bitacora.getColegio(), bitacora.getSede(), bitacora.getJornada(),
+				bitacora.getTipoLogBitacora(), descripcion,page);
+		
+		return new Response(HttpStatus.OK.value(), "Bitacora consultada correctamente", bitacoras);
 	}
 	
 	
