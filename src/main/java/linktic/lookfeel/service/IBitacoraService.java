@@ -23,4 +23,9 @@ public interface IBitacoraService {
 	Response obtenerJornadas(JornadaFiltroDto jornada);
 	
 	Response obtenerBitacora(BitacoraFiltroDto bitacora);
+	
+	Response exportarBitacoraAPdf(long id);
+	
+	Response exportarBitacoraAExcel(long id);
+	
 }

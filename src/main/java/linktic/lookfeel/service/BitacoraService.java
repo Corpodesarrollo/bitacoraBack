@@ -1,9 +1,13 @@
 package linktic.lookfeel.service;
 
+import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +24,7 @@ import linktic.lookfeel.dtos.SedeFiltroDto;
 import linktic.lookfeel.dtos.TipoLogDto;
 import linktic.lookfeel.dtos.UsuarioFiltroDto;
 import linktic.lookfeel.model.Bitacora;
+import linktic.lookfeel.model.BitacoraReporte;
 import linktic.lookfeel.model.Constante;
 import linktic.lookfeel.model.Institucion;
 import linktic.lookfeel.model.Jornada;
@@ -28,12 +33,14 @@ import linktic.lookfeel.model.Response;
 import linktic.lookfeel.model.Sede;
 import linktic.lookfeel.model.TipoLog;
 import linktic.lookfeel.model.Usuario;
+import linktic.lookfeel.repositories.BitacoraReporteRepository;
 import linktic.lookfeel.repositories.BitacoraRepository;
 import linktic.lookfeel.repositories.InstitucionRepository;
 import linktic.lookfeel.repositories.PersonalRepository;
 import linktic.lookfeel.repositories.SedeRepository;
 import linktic.lookfeel.security.repositories.TipoLogRepository;
 import linktic.lookfeel.security.repositories.UsuarioRepository;
+import linktic.lookfeel.util.Utilidades;
 
 /**
 *
@@ -49,16 +56,17 @@ public class BitacoraService implements IBitacoraService{
 
 	@Autowired
 	private final BitacoraRepository bitacoraRepository;
-	
+	private final BitacoraReporteRepository bitacoraReporteRepository;
 	private final TipoLogRepository tipoLogBitacoraRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final PersonalRepository personalRepository;
 	private final InstitucionRepository institucionRepository;
 	private final SedeRepository sedeRepository;
 
-    BitacoraService(BitacoraRepository bitacoraRepository,TipoLogRepository tipoLogBitacoraRepository,UsuarioRepository usuarioRepository,PersonalRepository personalRepository,
+    BitacoraService(BitacoraRepository bitacoraRepository,BitacoraReporteRepository bitacoraReporteRepository,TipoLogRepository tipoLogBitacoraRepository,UsuarioRepository usuarioRepository,PersonalRepository personalRepository,
     		InstitucionRepository institucionRepository,SedeRepository sedeRepository) {
         this.bitacoraRepository = bitacoraRepository;
+        this.bitacoraReporteRepository = bitacoraReporteRepository;
         this.tipoLogBitacoraRepository = tipoLogBitacoraRepository;
         this.usuarioRepository = usuarioRepository;
         this.personalRepository = personalRepository;
@@ -175,6 +183,32 @@ public class BitacoraService implements IBitacoraService{
 				bitacora.getTipoLogBitacora(), descripcion,page);
 		
 		return new Response(HttpStatus.OK.value(), "Bitacora consultada correctamente", bitacoras);
+	}
+	
+	@Override
+	public Response exportarBitacoraAPdf(long id) {
+		// TODO Auto-generated method stub
+		try {
+			BufferedImage logo = ImageIO.read(getClass().getResource("/imagenes/LOGOSED2.png"));
+			List<BitacoraReporte> bitacoras = bitacoraReporteRepository.consultaBitacoraReporte(id);
+			byte[] respuesta = Utilidades.exportReportToPdf(bitacoras, "plantillaBitacoraPdf", new HashMap<String, Object>() {{ put("logo", logo); }});
+			return new Response(HttpStatus.OK.value(), "Reporte generado correctamente", respuesta);
+		} catch (Exception e) {
+			return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+		}
+	}
+	
+	@Override
+	public Response exportarBitacoraAExcel(long id) {
+		// TODO Auto-generated method stub
+		try {
+			BufferedImage logo = ImageIO.read(getClass().getResource("/imagenes/LOGOSED2.png"));
+			List<BitacoraReporte> bitacoras = bitacoraReporteRepository.consultaBitacoraReporte(id);
+			byte[] respuesta = Utilidades.exportReportToXlsx(bitacoras, "plantillaBitacoraPdf", new HashMap<String, Object>() {{ put("logo", logo); }});
+			return new Response(HttpStatus.OK.value(), "Reporte generado correctamente", respuesta);
+		} catch (Exception e) {
+			return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+		}
 	}
 	
 	

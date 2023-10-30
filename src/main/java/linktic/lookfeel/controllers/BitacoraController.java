@@ -2,6 +2,7 @@ package linktic.lookfeel.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,7 +22,7 @@ import linktic.lookfeel.service.IBitacoraService;
 */
 
 @RestController
-@RequestMapping(value = "/api/apoyo/bitacora", method = { RequestMethod.POST})
+@RequestMapping(value = "/api/apoyo/bitacora", method = { RequestMethod.POST, RequestMethod.GET })
 @CrossOrigin(origins = "*")
 public class BitacoraController {
 
@@ -32,4 +33,17 @@ public class BitacoraController {
 	public Response insertarBitacora(BitacoraDto bitacora) {
 		return iBitacoraService.insertarBitacora(bitacora);
 	}
+	
+	@GetMapping(value = "/exportarAPdf", produces = "application/json")
+	public Response exportarAPdf(Long id) {
+		long idd = id!=null? id : 0;
+		return iBitacoraService.exportarBitacoraAPdf(idd);
+	}
+	
+	@GetMapping(value = "/exportarAExcel", produces = "application/json")
+	public Response exportarAExcel(Long id) {
+		long idd = id!=null? id : 0;
+		return iBitacoraService.exportarBitacoraAExcel(idd);
+	}
+	
 }

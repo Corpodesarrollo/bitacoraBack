@@ -1,15 +1,36 @@
 package linktic.lookfeel.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.springframework.util.ResourceUtils;
+
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporter;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.export.Exporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 
 public class Utilidades {
 
@@ -120,6 +141,36 @@ public class Utilidades {
 	 public static boolean validarToken(String storedToken, String token) {
 	       return storedToken != null && storedToken.equals(token);
 	    }
+	 
+	 private static JasperPrint getReport(List list, String templateName, Map<String, Object> ... params) throws FileNotFoundException, JRException {
+		 Map<String, Object> parameters = new HashMap<>();
+		 if(params.length > 0) {
+			 parameters = params[0];
+		 }
+		 JasperPrint report = JasperFillManager.fillReport(JasperCompileManager.compileReport(
+				 			  ResourceUtils.getFile("classpath:"+templateName+".jrxml").getAbsolutePath()), 
+				 parameters, new JRBeanCollectionDataSource(list,false));
+		 return report;
+	 }
+	 
+	 public static byte[] exportReportToPdf(List list, String templateName, Map<String, Object> ... params) throws FileNotFoundException, JRException  {
+		 JasperPrint report = Utilidades.getReport(list, templateName, params);
+		 return JasperExportManager.exportReportToPdf(report);
+	 }
+	 
+	 public static byte[] exportReportToXlsx(List list, String templateName, Map<String, Object> ... params) throws FileNotFoundException, JRException  {
+		 JasperPrint report = Utilidades.getReport(list, templateName, params);
+		 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		 Exporter exporter = new JRXlsExporter();
+		 exporter.setExporterInput(new SimpleExporterInput(report));
+		 exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(byteArrayOutputStream));
+		 SimpleXlsxReportConfiguration configuration = new SimpleXlsxReportConfiguration();
+		 configuration.setOnePagePerSheet(true);
+		 configuration.setIgnoreGraphics(false);
+		 exporter.setConfiguration(configuration);
+		 exporter.exportReport();
+		 return byteArrayOutputStream.toByteArray();
+	 }
 
 
 }
