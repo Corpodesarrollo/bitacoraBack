@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import linktic.lookfeel.dtos.BitacoraDto;
 import linktic.lookfeel.dtos.BitacoraFiltroDto;
 import linktic.lookfeel.dtos.ColegioFiltroDto;
+import linktic.lookfeel.dtos.ComboDto;
 import linktic.lookfeel.dtos.JornadaDTO;
 import linktic.lookfeel.dtos.JornadaFiltroDto;
 import linktic.lookfeel.dtos.SedeFiltroDto;
@@ -119,15 +120,24 @@ public class BitacoraService implements IBitacoraService{
 	@Override
 	public Response obtenerUsuarios(UsuarioFiltroDto usuario) {
 		List<Personal> personal=new ArrayList<>();
+		List<ComboDto> lista = new ArrayList<>();
 		
 		if(usuario.getNivelPerfil()==6) {
-			personal = personalRepository.getUsuarioXInstutucion(usuario.getInstitucion());
+			personal = personalRepository.getUsuarioXInstutucion(usuario.getInstitucion());			
 		}
 		else if(usuario.getNivelPerfil()==1 && usuario.getPerfil()==110) {
 			personal = personalRepository.findAll();
 		}
 		
-		return new Response(HttpStatus.OK.value(), "Usuarios consultados correctamente", personal);
+		for(int i=0;i<personal.size();i++) {
+			ComboDto c = new ComboDto();
+			Personal p = personal.get(i);
+			c.setCodigo(p.getPernumdocum());
+			c.setNombre(p.getPernombre1()+" "+p.getPernombre2()==null?"":p.getPernombre2()+" "+p.getPerapellido1()+" "+p.getPerapellido2()==null?"":p.getPerapellido2());
+			lista.add(c);	
+		}
+		
+		return new Response(HttpStatus.OK.value(), "Usuarios consultados correctamente", lista);
 	}
 
 	@Override
