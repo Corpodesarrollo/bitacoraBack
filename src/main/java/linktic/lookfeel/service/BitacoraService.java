@@ -133,7 +133,7 @@ public class BitacoraService implements IBitacoraService{
 			ComboDto c = new ComboDto();
 			Personal p = personal.get(i);
 			c.setCodigo(p.getPernumdocum());
-			c.setNombre(p.getPernombre1()+" "+p.getPernombre2()==null?"":p.getPernombre2()+" "+p.getPerapellido1()+" "+p.getPerapellido2()==null?"":p.getPerapellido2());
+			c.setNombre(p.getPernombre1()+" "+(p.getPernombre2()==null?"":p.getPernombre2())+" "+p.getPerapellido1()+" "+(p.getPerapellido2()==null?"":p.getPerapellido2()));
 			lista.add(c);	
 		}
 		
