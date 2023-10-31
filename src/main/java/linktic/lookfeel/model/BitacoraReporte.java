@@ -29,10 +29,10 @@ public class BitacoraReporte {
 		@Column(name="PERFNOMBRE",length = 60)
 	    private String perfil;
 		
-		@Column(name="SERNOMBRE",length = 150)
+		@Column(name="CATNOMBRE",length = 25)
 	    private String modulo;
 		
-		@Column(name="CATNOMBRE",length = 25)
+		@Column(name="SERNOMBRE",length = 150)
 	    private String submodulo;
 		
 		@Column(name="TIPO_LOG_BITACORA",length = 30)
