@@ -24,24 +24,24 @@ public class Grupo {
 	public String grupoNombre;
 	
 	@Column(name = "GRUCODESPACIO")
-	public long grupoEspacio;	
+	public Long grupoEspacio;	
 	
 	@Column(name = "GRUCODCOORD")
-	public long grupoCoordinador;	
+	public Long grupoCoordinador;	
 	
 	@Column(name = "GRUCUPO")
-	public long grupoCupo;	
+	public Long grupoCupo;	
 	
 	@Column(name = "GRUORDEN")
-	public long grupoOrdden;	
+	public Long grupoOrdden;	
 	
 	@Column(name = "GRUESTADO")
-	public long grupoEstado;	
+	public Long grupoEstado;	
 	
 	@Column(name = "GRUFECHA")
 	public Date grupoFecha;	
 	
 	@Column(name = "GRUJERGRUPO")
-	public long gruJerGrupo;	
+	public Long gruJerGrupo;	
 
 }

@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import linktic.lookfeel.dtos.JornadaDTO;
-import linktic.lookfeel.model.Constante;
 import linktic.lookfeel.model.Jornada;
 import linktic.lookfeel.model.Sede;
 
@@ -73,12 +71,11 @@ public interface SedeRepository extends JpaRepository<Sede,Long>{
 			+ "and inst.inscodigo = :codigoInstitucion\r\n"
 			+ "and se.sedcodigo = :codigoSede")
 	Sede sedePorCodigoInstYCodigoSede(Long codigoSede, Long codigoInstitucion);
-	
+
 	@Query(nativeQuery = true, value = "select distinct sj.SEDJORCODJOR,gc.g_connombre from jornada j\r\n"
 			+ "join sede_jornada sj on sj.sedjorcodjor = j.jorcodigo \r\n"
 			+ "join sede s on sj.sedjorcodsede = s.sedcodigo \r\n"
 			+ "join g_constante gc on j.jorcodigo = gc.g_concodigo and gc.g_contipo = 5 "
 			+ "where s.sedcodigo=:sede")
 	List<Object[]> findJornadasBySede (long sede);
-
 }

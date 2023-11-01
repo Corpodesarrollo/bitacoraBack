@@ -20,5 +20,9 @@ public interface IPoliticasProteccionService {
 	
 	Response verListaAceptacion();
 	
-	Response consultarAceptacionUsuario(String usuario);
+	Response consultarAceptacionPoliticaUso(String usuario);
+	
+	Response consultarAceptacionPoliticaDatos(String usuario);
+	
+	Response marcarReenviar(String tipoPolitica);
 }

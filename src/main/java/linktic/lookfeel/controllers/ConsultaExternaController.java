@@ -1,7 +1,9 @@
 package linktic.lookfeel.controllers;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -10,16 +12,19 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import linktic.lookfeel.dtos.BitacoraDto;
 import linktic.lookfeel.dtos.BitacoraFiltroDto;
 import linktic.lookfeel.dtos.ColegioFiltroDto;
 import linktic.lookfeel.dtos.ConstanteDto;
 import linktic.lookfeel.dtos.JornadaFiltroDto;
+import linktic.lookfeel.dtos.PaginadoDTO;
 import linktic.lookfeel.dtos.SedeFiltroDto;
 import linktic.lookfeel.dtos.UsuarioFiltroDto;
 import linktic.lookfeel.model.Response;
@@ -75,19 +80,58 @@ public class ConsultaExternaController {
 		Response respuesta = iConsultaExternaService.validPinDocumento(pin);
 		try {
 			Resource resource = (Resource) respuesta.getData();
+			
 			if (resource.exists()) {
 				HttpHeaders headers = new HttpHeaders();
 				headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + resource.getFilename());
 				return ResponseEntity.ok().headers(headers).body(resource);
 			} else {
-				return ResponseEntity.notFound().build();
+				ObjectMapper objectMapper = new ObjectMapper();
+				String errorResponseJson = objectMapper.writeValueAsString(respuesta);
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(new ByteArrayResource(errorResponseJson.getBytes()));
 			}
 		} catch (Exception e) {
-			return ResponseEntity.notFound().build();
+			ObjectMapper objectMapper = new ObjectMapper();
+			String errorResponseJson = objectMapper.writeValueAsString(respuesta);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(new ByteArrayResource(errorResponseJson.getBytes()));
 		}
 
 	}
 
+	@GetMapping(value = "/estudiantes/institucion/{codigoInstitucion}/{codigoSede}/{codigoJornada}/{numPagina}/{numRegPorPagina}", produces = "application/json")
+	public Response consultaEstudiantesPorInstitucion(@PathVariable("codigoInstitucion") int codigoInstitucion,
+														@PathVariable("codigoSede") String codigoSede,
+														@PathVariable("codigoJornada") String codigoJornada,
+														@PathVariable("numPagina") int numPagina,
+														@PathVariable("numRegPorPagina") int numRegPorPagina) {
+		
+		PaginadoDTO respuesta = iConsultaExternaService.consultaPaginadaEstudiantesPorInstitucion(codigoInstitucion,
+				codigoSede,
+				codigoJornada,
+				numPagina,
+				numRegPorPagina);
+		
+		if (respuesta == null) {
+			return new Response(HttpStatus.NO_CONTENT.value(), HttpStatus.BAD_REQUEST.name(), null);
+		} else {
+			return new Response(HttpStatus.OK.value(), "La consulta se realizo Exitosamente", respuesta);
+		}
+	}
+	
+	@GetMapping(value = "/colegios/{codigoLocalidad}/{numPagina}/{numRegPorPagina}", produces = "application/json")
+	public Response consultaColegiosPaginados(@PathVariable("codigoLocalidad") int codigoLocalidad,
+											  @PathVariable("numPagina") int numPagina, 
+			                                  @PathVariable("numRegPorPagina") int numRegPorPagina) {
+		
+		PaginadoDTO respuesta = iConsultaExternaService.consultaColegiosPaginados(codigoLocalidad, numPagina,numRegPorPagina);
+		
+		if (respuesta == null) {
+			return new Response(HttpStatus.NO_CONTENT.value(), HttpStatus.BAD_REQUEST.name(), null);
+		} else {
+			return new Response(HttpStatus.OK.value(), "La consulta se realizo Exitosamente", respuesta);
+		}
+	}
+	
 	@PostMapping(value = "/insertarBitacora", produces = "application/json")
 	public Response insertarBitacora(@RequestBody(required = true) BitacoraDto bitacora) {
 		return iBitacoraService.insertarBitacora(bitacora);

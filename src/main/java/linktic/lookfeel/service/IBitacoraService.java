@@ -27,5 +27,4 @@ public interface IBitacoraService {
 	Response exportarBitacoraAPdf(long id);
 	
 	Response exportarBitacoraAExcel(long id);
-	
 }

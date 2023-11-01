@@ -10,6 +10,4 @@ public class SedeFiltroDto {
 	public void setColegio(long colegio) {
 		this.colegio = colegio;
 	}
-
-	
 }

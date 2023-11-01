@@ -98,8 +98,7 @@ public class UserPrincipal implements UserDetails {
                                 .map(GrantedAuthority::getAuthority)
                                 .collect(Collectors.toList()))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                //.setExpiration(new Date(System.currentTimeMillis() + 200000))
-                .setExpiration(new Date(System.currentTimeMillis() + 300000))
+                .setExpiration(new Date(System.currentTimeMillis() + 4000000))
                 .signWith(SignatureAlgorithm.HS512,
                         secretKey.getBytes()).compact();
 
@@ -117,8 +116,7 @@ public class UserPrincipal implements UserDetails {
                 .claim("authorities",
                         password)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                //.setExpiration(new Date(System.currentTimeMillis() + 4000000))
-                .setExpiration(new Date(System.currentTimeMillis() + 300000))
+                .setExpiration(new Date(System.currentTimeMillis() + 4000000))
                 .signWith(SignatureAlgorithm.HS512,
                         secretKey.getBytes()).compact();
 

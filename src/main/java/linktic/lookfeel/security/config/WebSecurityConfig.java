@@ -44,6 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api-docs/**").permitAll()
 				.antMatchers("/api/apoyo/seguridad/**").permitAll()
 				.antMatchers("/api/apoyo/consultas/**").permitAll()
+				.antMatchers("/api/apoyo/politicas/**").permitAll()
 				.anyRequest().authenticated();
 		http.cors().configurationSource(corsConfigurationSource());
 	}

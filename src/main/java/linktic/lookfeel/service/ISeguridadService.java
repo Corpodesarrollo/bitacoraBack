@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 
-import linktic.lookfeel.dtos.grupoServicioDTO;
 import linktic.lookfeel.model.Response;
 import linktic.lookfeel.model.Usuario;
 
@@ -29,5 +28,5 @@ public interface ISeguridadService {
 	
 	boolean validarPermisos(String usuarioId, long permisoId);
 	
-	List<grupoServicioDTO> consultarPermisosPorPerfil(int idPerfilCodigo);
+	
 }

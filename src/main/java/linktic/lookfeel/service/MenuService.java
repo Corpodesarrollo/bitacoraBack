@@ -48,9 +48,9 @@ public class MenuService implements IMenuService {
 
         MenuDto menu = new MenuDto();
 
-        menu.setSerCatCodigo(obj[0] == null ? "" : String.valueOf(obj[0]));
-        menu.setCatNombre(obj[1] == null ? "" : String.valueOf(obj[1]));
-        menu.setCatImagen(obj[2] == null ? "" : String.valueOf(obj[2]));
+        menu.setSerRecurso(obj[0] == null ? "" : String.valueOf(obj[0]));
+        menu.setSerTarget(obj[1] == null ? "" : String.valueOf(obj[1]));
+        menu.setSerNombre(obj[2] == null ? "" : String.valueOf(obj[2]));
         menu.setSerCodigo(obj[3] == null ? "" : String.valueOf(obj[3]));
 
         return menu;
@@ -62,9 +62,9 @@ public class MenuService implements IMenuService {
 
         MenuDto menu = new MenuDto();
 
-        menu.setSerRecurso(obj[0] == null ? "" : String.valueOf(obj[0]));
-        menu.setSerTarget(obj[1] == null ? "" : String.valueOf(obj[1]));
-        menu.setSerNombre(obj[2] == null ? "" : String.valueOf(obj[2]));
+        menu.setSerCatCodigo(obj[0] == null ? "" : String.valueOf(obj[0]));
+        menu.setCatNombre(obj[1] == null ? "" : String.valueOf(obj[1]));
+        menu.setCatImagen(obj[2] == null ? "" : String.valueOf(obj[2]));
         menu.setSerCodigo(obj[3] == null ? "" : String.valueOf(obj[3]));
 
         return menu;

@@ -1,15 +1,8 @@
 package linktic.lookfeel.dtos;
 
-import java.time.LocalDateTime;
-
-import javax.persistence.Column;
-
-import lombok.Getter;
-import lombok.Setter;
-
 public class BitacoraDto {
 
-    private Long usuario;
+	private Long usuario;
     private Long modulo;
     private Long submodulo;
     private Long tipoLog;

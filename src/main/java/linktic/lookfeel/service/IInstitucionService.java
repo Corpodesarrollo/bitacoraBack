@@ -1,6 +1,10 @@
 package linktic.lookfeel.service;
 
+import java.util.List;
+
+import linktic.lookfeel.dtos.AccesoDirectoPorPerfilDTO;
 import linktic.lookfeel.dtos.ResponseInsitucionDTO;
+import linktic.lookfeel.dtos.grupoServicioDTO;
 
 public interface IInstitucionService {
 	
@@ -13,5 +17,8 @@ public interface IInstitucionService {
 	 * @return ResponseInsitucionDTO
 	 */
 	public ResponseInsitucionDTO getInsitucionesByPersona(String idPersona);
-
+	
+	List<grupoServicioDTO> consultarPermisosPorPerfil(int idPerfilCodigo);
+	
+	List<AccesoDirectoPorPerfilDTO> consultarAccesosDirectosPorPerfil(int idPerfilCodigo);
 }

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import linktic.lookfeel.dtos.UsuariosDTO;
-import linktic.lookfeel.dtos.grupoServicioDTO;
 import linktic.lookfeel.model.Response;
 import linktic.lookfeel.model.Usuario;
 import linktic.lookfeel.service.ISeguridadService;
@@ -87,21 +86,5 @@ public class SeguridadController {
 
 	}
 	
-	/**
-	 * 
-	 * Metodo para obtener los grupos de servicios para permisos
-	 * 
-	 * @return Response
-	 */
-	@GetMapping(value = "/usuarios/permisos/{idPerfilCodigo}", produces = "application/json")
-	public Response consultarPermisosPorPerfil(@PathVariable("idPerfilCodigo") int idPerfilCodigo) {
-		List<grupoServicioDTO> resultado = iSeguridadService.consultarPermisosPorPerfil(idPerfilCodigo);
-		
-		if (resultado.isEmpty()) {
-			return new Response(HttpStatus.NO_CONTENT.value(), HttpStatus.BAD_REQUEST.name(), null);
-		} else {
-			return new Response(HttpStatus.OK.value(), "La consulta se realizo Exitosamente", resultado);
-		}
-	}
-
+	
 }

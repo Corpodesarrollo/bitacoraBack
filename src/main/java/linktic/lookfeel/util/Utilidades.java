@@ -141,7 +141,7 @@ public class Utilidades {
 	 public static boolean validarToken(String storedToken, String token) {
 	       return storedToken != null && storedToken.equals(token);
 	    }
-	 
+
 	 private static JasperPrint getReport(List list, String templateName, Map<String, Object> ... params) throws FileNotFoundException, JRException {
 		 Map<String, Object> parameters = new HashMap<>();
 		 if(params.length > 0) {
@@ -171,6 +171,4 @@ public class Utilidades {
 		 exporter.exportReport();
 		 return byteArrayOutputStream.toByteArray();
 	 }
-
-
 }

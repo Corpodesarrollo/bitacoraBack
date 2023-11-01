@@ -47,6 +47,10 @@ public class Institucion implements Serializable {
 	/** The municipio. */
 	@Column(name="INSCODMUN", length=3)
 	private Long municipio;
+	
+	/** The vigencia. */
+	@Column(name="INSVIGENCIA", length=3)
+	private Long vigencia;
 
 
 	/** The Constant serialVersionUID. */
@@ -170,6 +174,20 @@ public class Institucion implements Serializable {
 	 */
 	public void setMunicipio(Long municipio) {
 		this.municipio = municipio;
+	}
+	
+	public Long getVigencia() {
+		return vigencia;
+	}
+
+
+	/**
+	 * Sets the vigencia.
+	 *
+	 * @param vigencia the new vigencia
+	 */
+	public void setVigencia(Long vigencia) {
+		this.vigencia = vigencia;
 	}
 
 

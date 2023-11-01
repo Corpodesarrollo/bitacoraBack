@@ -11,7 +11,7 @@ public interface MenuRepository extends JpaRepository<Categoria, Long> {
 
 
     @Query(nativeQuery = true, value = "SELECT SERCATCODIGO, CATNOMBRE, CATIMAGEN, COUNT(SERCODIGO) \n" +
-            "FROM CATEGORIA, SERVICIO \n" +
+            "FROM CATEGORIA, MENU \n" +
             "WHERE CATCODIGO=SERCATCODIGO AND GRUSERCODIGO IN \n" +
             "(SELECT SERPERGRUSERCODIGO FROM SERVICIO_PERFIL, GRUPO_SERVICIO \n" +
             "WHERE GRUSERCODIGO=SERPERGRUSERCODIGO AND SERPERFPERFCODIGO=:perfil AND (GRUSERPROGRAMA=0 OR GRUSERPROGRAMA IN \n" +
@@ -20,7 +20,7 @@ public interface MenuRepository extends JpaRepository<Categoria, Long> {
     List<Object[]> getListGeneralCategory(Long institucion, String perfil);
 
     @Query(nativeQuery = true, value = "SELECT SERRECURSO, SERTARGET, SERNOMBRE, SERCODIGO \n" +
-            "FROM SERVICIO \n" +
+            "FROM MENU \n" +
             "WHERE SERPUBLICO=1 AND SERVISIBLE=1 AND GRUSERCODIGO IN \n" +
             "(SELECT GRUSERCODIGO FROM GRUPO_SERVICIO WHERE GRUSERPROGRAMA=0 OR GRUSERPROGRAMA IN \n" +
             "(SELECT INSPROPROGRAMA FROM INSTITUCION_PROGRAMA WHERE INSPROCOLEGIO=:institucion)) AND SERNOMBRE IS NOT NULL ORDER BY SERORDEN")

@@ -120,8 +120,8 @@ public class AzureOfficeService implements IAzureOfficeService {
 
 
 
-			usuario.setToken(token.getAccess_token());
-			usuario.setExpira_en(token.getExpires_in());
+			//usuario.setToken(token.getAccess_token());
+			//usuario.setExpira_en(token.getExpires_in());
 			usuario.setCambiar_contrasenia(false);
 
 			// inicia  generación del token
@@ -304,8 +304,8 @@ public class AzureOfficeService implements IAzureOfficeService {
 					response.setExito(true);
 					response.setUsuario(usuario);
 
-					usuario.setToken(token.getAccess_token());
-					usuario.setExpira_en(token.getExpires_in());
+					//usuario.setToken(token.getAccess_token());
+					//usuario.setExpira_en(token.getExpires_in());
 
 					UserDetails userDetails =  serviceSecurity.generateToken(email,token.getAccess_token());
 					usuario.setUserDetails(userDetails);
@@ -348,8 +348,8 @@ public class AzureOfficeService implements IAzureOfficeService {
 					response.setExito(true);
 					response.setUsuario(usuario);
 
-					usuario.setToken(token.getAccess_token());
-					usuario.setExpira_en(token.getExpires_in());
+					//usuario.setToken(token.getAccess_token());
+					//usuario.setExpira_en(token.getExpires_in());
 
 					UserDetails userDetails =  serviceSecurity.generateToken(email,token.getAccess_token());
 					usuario.setUserDetails(userDetails);

@@ -1,5 +1,9 @@
 package linktic.lookfeel.service;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,24 +16,22 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-
 import linktic.lookfeel.dtos.ColegioDTO;
 import linktic.lookfeel.dtos.DatosEstudianteDTO;
+import linktic.lookfeel.dtos.EstudiantesPorInstitucionDTO;
 import linktic.lookfeel.dtos.GradoDTO;
 import linktic.lookfeel.dtos.GrupoDTO;
 import linktic.lookfeel.dtos.JornadaDTO;
 import linktic.lookfeel.dtos.MetodologiaDTO;
+import linktic.lookfeel.dtos.PaginadoDTO;
 import linktic.lookfeel.dtos.SedeDTO;
 import linktic.lookfeel.dtos.TipoDocumentoDTO;
+import linktic.lookfeel.dtos.TotalEstudiantesPorInstitucionDTO;
 import linktic.lookfeel.model.Constante;
 import linktic.lookfeel.model.ConsultaExterna;
 import linktic.lookfeel.model.DatosEstudiante;
 import linktic.lookfeel.model.Estudiante;
+import linktic.lookfeel.model.Grado;
 import linktic.lookfeel.model.Grupo;
 import linktic.lookfeel.model.Institucion;
 import linktic.lookfeel.model.Periodos;
@@ -39,10 +41,12 @@ import linktic.lookfeel.repositories.ConstanteRepository;
 import linktic.lookfeel.repositories.ConsultaExternaRepository;
 import linktic.lookfeel.repositories.DatosEstudianteRepository;
 import linktic.lookfeel.repositories.EstudianteRepository;
+import linktic.lookfeel.repositories.GradoRepository;
 import linktic.lookfeel.repositories.GrupoRepository;
 import linktic.lookfeel.repositories.InstitucionRepository;
 import linktic.lookfeel.repositories.PeriodosRepository;
 import linktic.lookfeel.repositories.SedeRepository;
+import linktic.lookfeel.util.UtilString;
 import linktic.lookfeel.util.Utilidades;
 
 /**
@@ -79,6 +83,9 @@ public class ConsultaExternaService implements IConsultaExternaService {
 	private GrupoRepository grupoRepository;
 	
 	@Autowired
+	private GradoRepository gradoRepository;
+	
+	@Autowired
 	private SedeRepository sedeRepository;
 	
 	@Autowired
@@ -96,20 +103,24 @@ public class ConsultaExternaService implements IConsultaExternaService {
 			url = consultaDocumento(pinDocumento);
 			if (url != null) {
 				Resource resource;
-				String patch = url.getCeRutaArchivo().replace('.', Utilidades.getSeparadorSO());
-				filePath = Paths.get(patch+url.getCeNombreArchivo()).toAbsolutePath().normalize();
-				try {
-					resource = new UrlResource(filePath.toUri());
-					if (resource.exists()) {
-						return new Response(HttpStatus.OK.value(), "Respuesta Exitosa.", resource);						
-	                }else {
-	                	log.error("No se encontraron archivo para mostrar ", url.getCeNombreArchivo());
-	                	return new Response(HttpStatus.BAD_REQUEST.value(),"No se encontraron archivo para mostrar ", url.getCeNombreArchivo());
-                }
-		
-				}catch (MalformedURLException e) {
-					log.error("Se creado una excepcion para mostar el archivo ", url.getCeNombreArchivo());
-					return new Response(HttpStatus.BAD_REQUEST.value(),"Se creado una excepcion para mostar el archivo ", url.getCeNombreArchivo());
+				if(url.getCeRutaArchivo()!=null) {
+						String patch = url.getCeRutaArchivo().replace('.', Utilidades.getSeparadorSO());
+					filePath = Paths.get(patch+url.getCeNombreArchivo()).toAbsolutePath().normalize();
+					try {
+						resource = new UrlResource(filePath.toUri());
+						if (resource.exists()) {
+							return new Response(HttpStatus.OK.value(), "Respuesta Exitosa.", resource);						
+		                }else {
+		                	log.error("No se encontraron archivo para mostrar ", url.getCeNombreArchivo());
+		                	return new Response(HttpStatus.BAD_REQUEST.value(),"No se encontraron archivo para mostrar ", url.getCeNombreArchivo());
+	                }
+			
+					}catch (MalformedURLException e) {
+						log.error("Se creado una excepcion para mostar el archivo ", url.getCeNombreArchivo());
+						return new Response(HttpStatus.BAD_REQUEST.value(),"Se creado una excepcion para mostar el archivo ", url.getCeNombreArchivo());
+					}
+				}else {
+					return new Response(HttpStatus.BAD_REQUEST.value(),"No se puede presentar el archivo porque no existe registro de la ubicación", url.getCeNombreArchivo());
 				}
 				
 			} else {
@@ -133,7 +144,7 @@ public class ConsultaExternaService implements IConsultaExternaService {
 		Sede sede = new Sede();
 		Constante jornada = new Constante();
 		Constante metodologia = new Constante();
-		Constante grado = new Constante();
+		Grado grado = new Grado();
 		Grupo grupo = new Grupo();
 		List<Periodos> periodo = new ArrayList<>();
 		
@@ -166,6 +177,7 @@ public class ConsultaExternaService implements IConsultaExternaService {
 							datosEstudianteDTO.setNombreEstudiante(datosEstudiante.getNombreEstudiante());
 							
 							institucion = consultaInstitucion(datosEstudiante.getCodigoInstitucion());
+							datosEstudianteDTO.setVigencia(institucion.getVigencia());
 							if(institucion!=null) {
 								colegioDTO.setId(institucion.getCodigo());	
 								colegioDTO.setNombre(institucion.getNombre());
@@ -194,10 +206,10 @@ public class ConsultaExternaService implements IConsultaExternaService {
 								metodologiaDTO.setNombre(metodologia.getNombre());
 								datosEstudianteDTO.setMetodologia(metodologiaDTO);
 							}
-							grado = consultaGrado(datosEstudiante.getGrado());
+							grado = consultaGrado(datosEstudiante.getCodigoInstitucion(), datosEstudiante.getMetodologia(), datosEstudiante.getGrado());
 							if(grado != null) {
-								gradoDTO.setId(grado.getConstantePk().getCodigo());
-								gradoDTO.setNombre(grado.getNombre());
+								gradoDTO.setId(grado.getGracodigo());
+								gradoDTO.setNombre(grado.getGranombre());
 								datosEstudianteDTO.setGrado(gradoDTO);
 							}
 							grupo = consultaGrupo(datosEstudiante.getCodigoInstitucion(), datosEstudiante.getCodigoSede(), datosEstudiante.getJornada(), datosEstudiante.getGrado(), datosEstudiante.getGrupo());
@@ -316,10 +328,10 @@ public class ConsultaExternaService implements IConsultaExternaService {
 		return respuesta;
 	}
 	
-	private Constante consultaGrado(long id) {
-		Constante respuesta = new Constante();
+	private Grado consultaGrado(long idInstitucion, long idMetodologia, long idGrado) {
+		Grado respuesta = new Grado();
 		try {
-			respuesta = constanteRepository.gradoPorId(id);
+			respuesta = gradoRepository.gradoPorInstMetodIdEst(idInstitucion, idMetodologia, idGrado);
 		} catch (Exception e) {
 			respuesta = null;
 		}
@@ -337,6 +349,7 @@ public class ConsultaExternaService implements IConsultaExternaService {
 		return respuesta;
 	}
 	
+		
 	private List<Periodos> consultaPeriodos() {
 		List<Periodos> respuesta = new  ArrayList<>();
 		try {
@@ -358,4 +371,132 @@ public class ConsultaExternaService implements IConsultaExternaService {
 		return info;
 	}
 	
+	@Override
+	public PaginadoDTO consultaPaginadaEstudiantesPorInstitucion( int codigoInstitucion,
+			String codigoSede,
+			String codigoJornada,
+			int numPagina,
+			int numRegPorPagina) {
+		List<Object[]> listData = null;
+		List<EstudiantesPorInstitucionDTO> listaEstudiantesPorInstitucion = null;
+		PaginadoDTO paginadoDTO = null;
+		int totalRegistros = 0;
+		int numeroPaginas = 0;
+		
+		try {
+			
+			if (codigoInstitucion <= 0) {
+				throw new Exception("El id o codigo de la institución es inferior o igual a cero, digite un numero entero y superior a cero");
+			}
+			
+			if (numPagina <= 0) {
+				throw new Exception("El numero de pagina es inferior o igual a cero, digite un numero entero y superior a cero");
+			}
+			
+			if (numRegPorPagina <= 0) {
+				throw new Exception("El numero de registros por pagina es inferior o igual a cero, digite un numero entero y superior a cero");
+			}
+			
+			if (codigoSede == null || codigoSede.isEmpty()) {
+				codigoSede = "0";
+			}		
+			
+			if (codigoJornada == null || codigoJornada. isEmpty()) {
+				codigoJornada = "-1"; // Se realiza, debido a que existen relaciones con el valor cero (0)
+			}
+			
+			listData = estudianteRepository.consultaTotalRegEstudiantesPorInstitucion(codigoInstitucion, Integer.parseInt(codigoSede), Integer.parseInt(codigoJornada));
+			
+			if (listData == null || listData.isEmpty()) {
+				throw new Exception("No se encontraron registros");
+			}
+			
+			// Se obtiene el total de registros
+			for (Object[] regData : listData) {
+				totalRegistros = Integer.parseInt(UtilString.obtenerValorString(regData[0]));
+				numeroPaginas = (int) Math.ceil((double) totalRegistros / numRegPorPagina);
+			}
+			
+			listData = null;
+			listData = estudianteRepository.consultaPaginadaEstudiantesPorInstitucion(codigoInstitucion, Integer.parseInt(codigoSede), Integer.parseInt(codigoJornada), numPagina, numRegPorPagina);
+			
+			listaEstudiantesPorInstitucion = new ArrayList<>();
+			
+			if (listData != null && !listData.isEmpty()) {
+				for (Object[] regData : listData) {
+					listaEstudiantesPorInstitucion.add(new EstudiantesPorInstitucionDTO(UtilString.obtenerValorString(regData[0]), 
+							UtilString.obtenerValorString(regData[1]),
+							UtilString.obtenerValorString(regData[2]),
+							UtilString.obtenerValorString(regData[3]), 
+							UtilString.obtenerValorString(regData[4]),
+							UtilString.obtenerValorString(regData[5]), 
+							UtilString.obtenerValorString(regData[6]),
+							UtilString.obtenerValorString(regData[7]),
+							UtilString.obtenerValorString(regData[8]),
+							UtilString.obtenerValorString(regData[9])));
+				}
+			}
+			
+			paginadoDTO = new PaginadoDTO(numPagina, numeroPaginas, numRegPorPagina, totalRegistros, listaEstudiantesPorInstitucion);
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return paginadoDTO;
+	}
+	
+	
+	@Override
+	public PaginadoDTO consultaColegiosPaginados(int codigoLocalidad, int numPagina, int numRegPorPagina) {
+		List<Object[]> listData = null;
+		List<TotalEstudiantesPorInstitucionDTO> listaTotalEstudiantesPorInstitucion = null;
+		PaginadoDTO paginadoDTO = null;
+		int totalRegistros = 0;
+		int numeroPaginas = 0;
+		
+		try {
+			if (numPagina <= 0) {
+				throw new Exception("El numero de pagina es inferior o igual a cero, digite un numero entero y superior a cero");
+			}
+			
+			if (numRegPorPagina <= 0) {
+				throw new Exception("El numero de registros por pagina es inferior o igual a cero, digite un numero entero y superior a cero");
+			}
+			
+			listData = estudianteRepository.consultaTotalRegTotalEstudiantesPorInstituto(codigoLocalidad);
+			
+			if (listData == null || listData.isEmpty()) {
+				throw new Exception("No se encontraron registros");
+			}
+			
+			// Se obtiene el total de registros
+			for (Object[] regData : listData) {
+				totalRegistros = Integer.parseInt(UtilString.obtenerValorString(regData[0]));
+				numeroPaginas = (int) Math.ceil((double) totalRegistros / numRegPorPagina);
+			}
+			
+			listData = null;
+			listData = estudianteRepository.consultaPaginadaTotalEstudiantesPorInstituto(codigoLocalidad,numPagina, numRegPorPagina);
+			
+			listaTotalEstudiantesPorInstitucion = new ArrayList<>();
+			
+			if (listData != null && !listData.isEmpty()) {
+				for (Object[] regData : listData) {
+					listaTotalEstudiantesPorInstitucion.add(new TotalEstudiantesPorInstitucionDTO(Integer.parseInt(UtilString.obtenerValorString(regData[0])),
+							  UtilString.obtenerValorString(regData[1]),
+							  UtilString.obtenerValorString(regData[2]), 
+							  Integer.parseInt(UtilString.obtenerValorString(regData[3]))));
+				}
+			}
+			
+			paginadoDTO = new PaginadoDTO(numPagina, numeroPaginas, numRegPorPagina, totalRegistros, listaTotalEstudiantesPorInstitucion);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return paginadoDTO;
+	}
 }

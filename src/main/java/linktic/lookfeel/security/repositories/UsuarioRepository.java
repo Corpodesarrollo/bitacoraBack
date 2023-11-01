@@ -48,7 +48,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
      * @return
      */
     Optional<Usuario> findByUsuPerNumDocum(String username);
-    
+
     @Query(nativeQuery = true, value = "select gjer.g_jernivel from usuario u\n" +
             "join g_jerarquia gjer on gjer.g_jercodigo = u.usucodjerar\n" +
             "where usulogin= :usulogin ")
@@ -63,4 +63,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
             "join g_jerarquia gjer on gjer.g_jercodigo = u.usucodjerar\n" +
             "where usulogin= :usulogin ")
     Long institucionUsuario(String usulogin);
+
 }

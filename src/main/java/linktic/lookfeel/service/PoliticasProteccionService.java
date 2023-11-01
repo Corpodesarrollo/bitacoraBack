@@ -7,23 +7,26 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import linktic.lookfeel.dtos.AceptacionUsuarioDto;
 import linktic.lookfeel.dtos.AceptarPoliticaDto;
 import linktic.lookfeel.dtos.CrearPoliticaDto;
+import linktic.lookfeel.dtos.EstadoAceptacionDto;
 import linktic.lookfeel.dtos.PoliticaProteccionDto;
 import linktic.lookfeel.model.AceptacionPoliticas;
 import linktic.lookfeel.model.PoliticasProteccion;
 import linktic.lookfeel.model.Response;
 import linktic.lookfeel.repositories.AceptacionPoliticasRepository;
-import linktic.lookfeel.repositories.PerfilRepository;
 import linktic.lookfeel.repositories.PoliticasProteccionRepository;
+import linktic.lookfeel.model.TipoPoliticaEnum;
 
 @Service
 public class PoliticasProteccionService implements IPoliticasProteccionService {
@@ -140,14 +143,15 @@ public class PoliticasProteccionService implements IPoliticasProteccionService {
 	@Override
 	public Response eliminarPoliticaUso(Long idPolitica, String idUsuario){
 		try {
-			if(!seguridadService.validarPermisos(idUsuario, eliminarPolitica)) {
-				return new Response(HttpStatus.BAD_REQUEST.value(), "El usuario no tiene permisos para esta acción!", null);
-			}
-			politicasProteccionRepository.deleteById(idPolitica);
+					politicasProteccionRepository.deleteById(idPolitica);
 			log.info("Respuesta Exitosa al eliminar politica de uso.");
 			return new Response(HttpStatus.OK.value(), "La politica de uso fue eliminada Exitosamente!", null);
 			
-		} catch (Exception e) {
+		}
+		catch(DataIntegrityViolationException ce) {
+			return new Response(HttpStatus.BAD_REQUEST.value(), "No se puede eliminar la politica, existen usuarios asociados!", null);
+		}
+		catch (Exception e) {
 			log.error("Se generado una excepcion mientras se eliminaba la politica de uso.", e.getMessage());
 			return null;
 		}
@@ -163,9 +167,8 @@ public class PoliticasProteccionService implements IPoliticasProteccionService {
 			aceptacion.setIdPolitica(datosAceptacion.getIdPolitica());
 			aceptacion.setAceptada(datosAceptacion.aceptada? 1L : 0L);
 			aceptacion.setReenviar(0L);
-			if(datosAceptacion.aceptada) {
-				aceptacion.setFechaAceptacion(LocalDateTime.now());
-			}
+			aceptacion.setFechaAceptacion(LocalDateTime.now());
+			
 			aceptacionPoliticasRepository.save(aceptacion);
 			log.info("Respuesta Exitosa al registrar aceptación de  politica de uso.");
 			return new Response(HttpStatus.OK.value(), "Aceptación de  politica de uso registrada Exitosamente!", null);
@@ -190,8 +193,8 @@ public class PoliticasProteccionService implements IPoliticasProteccionService {
 					aceptacion.setUsuario(iterator[0].toString());
 					aceptacion.setNombres(iterator[1].toString());
 					aceptacion.setApellidos(iterator[2].toString());
-					aceptacion.setAceptaPoliticaUso(Boolean.parseBoolean(iterator[3]==null?"0":iterator[3].toString()));
-					aceptacion.setAceptaPoliticaDatos(Boolean.parseBoolean(iterator[4]==null?"0":iterator[4].toString()));
+					aceptacion.setAceptaPoliticaUso(iterator[3]== null ? false : iterator[3].toString().equals("1"));
+					aceptacion.setAceptaPoliticaDatos(iterator[4]== null ? false :iterator[4].toString().equals("1"));
 					listausuariosDto.add(aceptacion);
 				}
 			
@@ -206,18 +209,120 @@ public class PoliticasProteccionService implements IPoliticasProteccionService {
 	}
 	
 	@Override
-	public Response consultarAceptacionUsuario(String usuario) {
-		try {
-			AceptacionUsuarioDto usuarioAceptacion = aceptacionPoliticasRepository.verAceptacionUsuario(usuario);
+	public Response consultarAceptacionPoliticaUso(String usuario) {
+		List<Object[]> listaUsuarios = new ArrayList<>(); 
+		List<EstadoAceptacionDto> listausuariosDto = new ArrayList<>();
+		try {			
+			listaUsuarios = aceptacionPoliticasRepository.verAceptacionPoliticaUso(usuario);
+			if(listaUsuarios.size()>0) {
+				for (Object[] iterator : listaUsuarios) {
+					
+					EstadoAceptacionDto aceptacion = new EstadoAceptacionDto();
+					aceptacion.setUsuario(iterator[0].toString());
+					aceptacion.setIdPolitica(iterator[1].toString());
+					aceptacion.setTipoPolitica(iterator[2].toString());
+					aceptacion.setAceptada(iterator[3]== null ? false : iterator[3].toString().equals("1"));
+					aceptacion.setReenviar(iterator[4]== null ? false :iterator[4].toString().equals("1"));
+					listausuariosDto.add(aceptacion);
+				}
+			}else {
+				EstadoAceptacionDto aceptacion = new EstadoAceptacionDto();
+				aceptacion.setUsuario(usuario);
+				aceptacion.setIdPolitica("");
+				aceptacion.setTipoPolitica("POLITICA_USO");
+				aceptacion.setAceptada(false);
+				aceptacion.setReenviar(false);
+				listausuariosDto.add(aceptacion);
+			}
 			
-			log.info("Respuesta Exitosa de aceptacion politicas.");
-			return new Response(HttpStatus.OK.value(), "Respuesta Exitosa de aceptacion politicas.", usuarioAceptacion);
+			
+			
+			log.info("Respuesta Exitosa de ver aceptacion politicas.");
+			return new Response(HttpStatus.OK.value(), "Respuesta Exitosa de ver aceptacion politicas.", listausuariosDto);
 
 		} catch (Exception e) {
 			log.error("Se ha generado una excepcion al cargar la aceptacion de politicas.");
 			return new Response(HttpStatus.BAD_REQUEST.value(),
 					"Se ha generado una excepcion al cargar la aceptacion de politicas.", null);
 		}
+	}
+	
+	@Override
+	public Response consultarAceptacionPoliticaDatos(String usuario) {
+		List<Object[]> listaUsuarios = new ArrayList<>(); 
+		List<EstadoAceptacionDto> listausuariosDto = new ArrayList<>();
+		try {			
+			listaUsuarios = aceptacionPoliticasRepository.verAceptacionPoliticaDatos(usuario);
+			if(listaUsuarios.size()>0) {
+				for (Object[] iterator : listaUsuarios) {
+					
+					EstadoAceptacionDto aceptacion = new EstadoAceptacionDto();
+					aceptacion.setUsuario(iterator[0].toString());
+					aceptacion.setIdPolitica(iterator[1].toString());
+					aceptacion.setTipoPolitica(iterator[2].toString());
+					aceptacion.setAceptada(iterator[3]== null ? false : iterator[3].toString().equals("1"));
+					aceptacion.setReenviar(iterator[4]== null ? false :iterator[4].toString().equals("1"));
+					listausuariosDto.add(aceptacion);
+				}
+			}
+		   else {
+					EstadoAceptacionDto aceptacion = new EstadoAceptacionDto();
+					aceptacion.setUsuario(usuario);
+					aceptacion.setIdPolitica("");
+					aceptacion.setTipoPolitica("DATOS_PERSONALES");
+					aceptacion.setAceptada(false);
+					aceptacion.setReenviar(false);
+					listausuariosDto.add(aceptacion);
+		   		}
+			
+			
+			log.info("Respuesta Exitosa de aceptacion politicas.");
+			return new Response(HttpStatus.OK.value(), "Respuesta Exitosa de aceptacion politicas.", listausuariosDto);
+
+		} catch (Exception e) {
+			log.error("Se ha generado una excepcion al cargar la aceptacion de politicas.");
+			return new Response(HttpStatus.BAD_REQUEST.value(),
+					"Se ha generado una excepcion al cargar la aceptacion de politicas.", null);
+		}
+	}
+	
+	@Override
+	public Response marcarReenviar(String tipoPolitica){
+		try 
+		{
+			
+			if(tipoPolitica != null) {
+				if(tipoPolitica.equals(TipoPoliticaEnum.USO.getValor())) 
+				{
+					PoliticasProteccion politicaActiva = politicasProteccionRepository.verPoliticaUsoActivaTipo();
+					List<AceptacionPoliticas> aceptaciones =  aceptacionPoliticasRepository.consultarReenviarPoliticaUso(politicaActiva.getId().longValue());
+					if(aceptaciones.size()>0) {
+						for (AceptacionPoliticas aceptacion : aceptaciones) {
+							aceptacion.setReenviar(1L);
+							aceptacionPoliticasRepository.save(aceptacion);
+						}
+					}
+				}
+				else {
+					PoliticasProteccion politicaActiva = politicasProteccionRepository.verPoliticaDatosActivaTipo();
+					List<AceptacionPoliticas> aceptaciones =  aceptacionPoliticasRepository.consultarReenviarPoliticaDatos(politicaActiva.getId().longValue());
+					if(aceptaciones.size()>0) {
+						for (AceptacionPoliticas aceptacion : aceptaciones) {
+							aceptacion.setReenviar(1L);
+							aceptacionPoliticasRepository.save(aceptacion);
+						}
+					}
+				}
+			}
+			
+			log.info("Respuesta Exitosa al marcar para reenviar.");
+			return new Response(HttpStatus.OK.value(), "Respuesta Exitosa al marcar para reenviar!", null);
+			
+		} catch (Exception e) {
+			log.error("Se generado una excepcion mientras se realizaba marcar para reenviar.", e.getMessage());
+			return null;
+		}
+		
 	}
 
 }

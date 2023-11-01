@@ -11,6 +11,4 @@ public class JornadaFiltroDto {
 	public void setSede(int sede) {
 		this.sede = sede;
 	}
-	
-	
 }

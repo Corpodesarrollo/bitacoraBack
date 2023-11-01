@@ -1,19 +1,15 @@
 package linktic.lookfeel.service;
 
-import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import linktic.lookfeel.dtos.BitacoraDto;
 import linktic.lookfeel.dtos.BitacoraFiltroDto;
@@ -26,22 +22,23 @@ import linktic.lookfeel.dtos.TipoLogDto;
 import linktic.lookfeel.dtos.UsuarioFiltroDto;
 import linktic.lookfeel.model.Bitacora;
 import linktic.lookfeel.model.BitacoraReporte;
-import linktic.lookfeel.model.Constante;
 import linktic.lookfeel.model.Institucion;
-import linktic.lookfeel.model.Jornada;
 import linktic.lookfeel.model.Personal;
 import linktic.lookfeel.model.Response;
 import linktic.lookfeel.model.Sede;
 import linktic.lookfeel.model.TipoLog;
-import linktic.lookfeel.model.Usuario;
 import linktic.lookfeel.repositories.BitacoraReporteRepository;
 import linktic.lookfeel.repositories.BitacoraRepository;
 import linktic.lookfeel.repositories.InstitucionRepository;
 import linktic.lookfeel.repositories.PersonalRepository;
 import linktic.lookfeel.repositories.SedeRepository;
-import linktic.lookfeel.security.repositories.TipoLogRepository;
+import linktic.lookfeel.repositories.TipoLogRepository;
 import linktic.lookfeel.security.repositories.UsuarioRepository;
 import linktic.lookfeel.util.Utilidades;
+
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.util.HashMap;
 
 /**
 *
@@ -55,7 +52,6 @@ import linktic.lookfeel.util.Utilidades;
 @Service
 public class BitacoraService implements IBitacoraService{
 
-	@Autowired
 	private final BitacoraRepository bitacoraRepository;
 	private final BitacoraReporteRepository bitacoraReporteRepository;
 	private final TipoLogRepository tipoLogBitacoraRepository;
@@ -101,7 +97,7 @@ public class BitacoraService implements IBitacoraService{
 	@Override
 	public Response obtenerTipoLog() {
 		// TODO Auto-generated method stub
-		List<TipoLogDto> respuesta = new ArrayList<>();
+		List<TipoLogDto> respuesta = new ArrayList();
 		List<TipoLog> tiposLog = tipoLogBitacoraRepository.findAll();
 		TipoLogDto objD;
 		TipoLog obj;

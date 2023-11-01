@@ -7,17 +7,17 @@ import javax.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity 
 @Getter
 @Setter
 public class Grado {
 	
 	@Id
-	@Column(name = "ID")
-	public long id;
+	@Column(name = "GRACODIGO")
+	public long gracodigo;
 	
-	@Column(name = "NOMBRE")
-	public String nombre;
+	@Column(name = "GRANOMBRE")
+	public String granombre;
 	
 
 }

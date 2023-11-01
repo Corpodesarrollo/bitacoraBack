@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import linktic.lookfeel.ImageToBase64Converter;
+import linktic.lookfeel.dtos.AccesoDirectoPorPerfilDTO;
 import linktic.lookfeel.dtos.DependenciaDTO;
 import linktic.lookfeel.dtos.FotoDTO;
 import linktic.lookfeel.dtos.InstitucionDTO;
@@ -18,7 +19,10 @@ import linktic.lookfeel.dtos.PerfilDTO;
 import linktic.lookfeel.dtos.RegistroDTO;
 import linktic.lookfeel.dtos.ResponseInsitucionDTO;
 import linktic.lookfeel.dtos.SedeDTO;
+import linktic.lookfeel.dtos.grupoServicioDTO;
+import linktic.lookfeel.repositories.AccesoDirectoRepository;
 import linktic.lookfeel.repositories.PerfilRepository;
+import linktic.lookfeel.security.repositories.GrupoServicioRepository;
 
 @Service
 public class IntitucionService implements IInstitucionService {
@@ -32,6 +36,12 @@ public class IntitucionService implements IInstitucionService {
 
 	@Autowired
 	private ImageToBase64Converter imageToBase64Converter;
+	
+	@Autowired
+	private GrupoServicioRepository grupoServicioRepository;
+	
+	@Autowired
+	private AccesoDirectoRepository accesoDirectoRepository;
 
 	@Override
 	public ResponseInsitucionDTO getInsitucionesByPersona(String idPersona) {
@@ -46,23 +56,22 @@ public class IntitucionService implements IInstitucionService {
 		LocalidadDTO localidadInstitucion;
 		FotoDTO fotoDTO;
 		List<Object[]> listData = null;
-		String codPerfil = "";
+		String codNivel = "";
 		
 		List<Object[]> perfiles = perfilRepository.findPerfil(idPersona);
-
+		
 		for (Object[] regPerfil : perfiles) {
-			codPerfil = regPerfil[0].toString();
+			codNivel = regPerfil[4].toString();
 		}
 
-		if (codPerfil != null && !codPerfil.isEmpty()) {
+		if (codNivel != null && !codNivel.isEmpty()) {
 			
-			// VALIDA: Si los perfiles son (110)-ADMINSEC,(410)-RECTOR(A),(423)-ADMINISTRATIVO
-			if (Arrays.asList("110","410","423").contains(codPerfil)) { 
+			if (Arrays.asList("0","1","2","4").contains(codNivel)) { 
 				listData = perfilRepository.findRectorPerfilByNumDocumento(idPersona);
 			} else {
 				listData = perfilRepository.findHabitualPerfilByNumDocumento(idPersona);
 			}
-
+		
 			if (listData != null && !listData.isEmpty()) {
 
 				for (Object[] regData : listData) {
@@ -78,7 +87,7 @@ public class IntitucionService implements IInstitucionService {
 					perfil.setEtiqueta(regData[3].toString());
 					perfil.setNombre(regData[2].toString());
 					perfil.setIdPerfilNivel(Integer.parseInt(regData[13].toString()));
-
+					
 					if (regData[4] != null) {
 						// Se genera imagen
 						try {
@@ -88,16 +97,21 @@ public class IntitucionService implements IInstitucionService {
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-
-						localidadInstitucion.setId(Integer.parseInt(regData[6].toString()));
-						localidadInstitucion.setNombre(regData[7].toString());
-
-						// Se cargan datos de la institucion
-						institucion.setId(Long.parseLong(regData[4].toString()));
-						institucion.setNombre(regData[5].toString());
-						institucion.setLocalidad(localidadInstitucion);
-						institucion.setFoto_escudo(fotoDTO);
-
+						
+						// Se cargan datos de la LOCALIDAD DE LA INSTITUCION
+						if (regData[6] != null) {
+							localidadInstitucion.setId(Integer.parseInt(regData[6].toString()));
+							localidadInstitucion.setNombre(regData[7].toString());	
+						}						
+						
+						// Se cargan datos de la INSTITUCION
+						if (regData[4] != null) {
+							institucion.setId(Long.parseLong(regData[4].toString()));
+							institucion.setNombre(regData[5].toString());
+							institucion.setLocalidad(localidadInstitucion);
+							institucion.setFoto_escudo(fotoDTO);
+						}
+						
 						// Se entrega datos de SEDE
 						if (regData[8] != null) {
 							sede.setId(Long.parseLong(regData[8].toString()));
@@ -110,21 +124,21 @@ public class IntitucionService implements IInstitucionService {
 							jornada.setNombre(regData[11].toString());
 						}
 
-						// Se entrega datos de DEPENDENCIA
-						if (regData[14] != null) {
-							registro.setDependencia(new DependenciaDTO(Integer.parseInt(regData[14].toString()), 
-																	   regData[15].toString()));
-						}
-
-						// Se entrega datos de LOCALIDAD
-						if (regData[16] != null) {
-							registro.setLocalidad(new LocalidadDTO(Integer.parseInt(regData[16].toString()), 
-																   regData[17].toString()));
-						}
-
 						registro.setColegio(institucion);
 						registro.setSede(sede);
 						registro.setJornada(jornada);
+					}
+					
+					// Se entrega datos de DEPENDENCIA
+					if (regData[14] != null) {
+						registro.setDependencia(new DependenciaDTO(Integer.parseInt(regData[14].toString()), 
+																   regData[15].toString()));
+					}
+
+					// Se entrega datos de LOCALIDAD
+					if (regData[16] != null) {
+						registro.setLocalidad(new LocalidadDTO(Integer.parseInt(regData[16].toString()), 
+															   regData[17].toString()));
 					}
 
 					registro.setPerfil(perfil);
@@ -146,6 +160,63 @@ public class IntitucionService implements IInstitucionService {
 		}
 
 		return responseInsitucionDTO;
+	}
+	
+	@Override
+	public List<grupoServicioDTO> consultarPermisosPorPerfil(int idPerfilCodigo) {
+
+		List<grupoServicioDTO> listaGrupoServicio = new ArrayList<>();
+		List<Object[]> listData = null;
+		
+		try {
+			if (idPerfilCodigo <= 0) {
+				throw new Exception("El id del perfil codigo es inferior o igual a cero, digite un numero entero y superior a cero");
+			}
+			
+			listData = grupoServicioRepository.findGrupoServicioByPerfilCodigo(idPerfilCodigo);
+			
+			if (listData != null && !listData.isEmpty()) {
+				for (Object[] regData : listData) {
+					listaGrupoServicio.add(new grupoServicioDTO(Integer.parseInt(regData[0].toString()), regData[1].toString()));
+				}
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaGrupoServicio;
+	}
+	
+	
+	@Override
+	public List<AccesoDirectoPorPerfilDTO> consultarAccesosDirectosPorPerfil(int idPerfilCodigo) {
+
+		List<AccesoDirectoPorPerfilDTO> listaAccesoDirecto = null;
+		List<Object[]> listData = null;
+		
+		try {
+			if (idPerfilCodigo <= 0) {
+				throw new Exception("El id del perfil codigo es inferior o igual a cero, digite un numero entero y superior a cero");
+			}
+			
+			listData = accesoDirectoRepository.findAllByPerfil(idPerfilCodigo);
+			
+			if (listData != null && !listData.isEmpty()) {
+				listaAccesoDirecto = new ArrayList<>();
+				
+				for (Object[] regData : listData) {
+					listaAccesoDirecto.add(new AccesoDirectoPorPerfilDTO(Integer.parseInt(regData[0].toString()),
+																		 regData[1].toString(),
+																		 regData[2].toString()));
+				}
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listaAccesoDirecto;
 	}
 
 }

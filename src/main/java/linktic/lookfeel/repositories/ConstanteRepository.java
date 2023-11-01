@@ -33,15 +33,7 @@ public interface ConstanteRepository extends JpaRepository<Constante, ConstanteP
 			+ "AND gc.G_ConTipo=3")
 	Constante metodologiaPorCodigoInsti(long codMetodologia, long codInstitucion);
 	
-	@Query(nativeQuery = true, value ="SELECT gc.*\r\n"
-			+ "FROM G_Constante gc, g_grado gr\r\n"
-			+ "WHERE gc.g_concodigo = gr.g_gracodigo\r\n"
-			+ "AND gc.g_concodigo = :codGrado\r\n"
-			+ "AND gc.G_ConTipo=30")
-	Constante gradoPorId(long codGrado);
-
-
-    List<Constante> findByConstantePkTipo(Long tipo);
+	List<Constante> findByConstantePkTipo(Long tipo);
     
     @Query(nativeQuery = true, value ="SELECT * "
     		+ "FROM G_Constante "

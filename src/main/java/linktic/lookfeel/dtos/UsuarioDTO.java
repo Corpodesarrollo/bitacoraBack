@@ -13,8 +13,8 @@ public class UsuarioDTO {
 	private String nombre;
 	//private PerfilDTO perfil;
 	private FotoDTO foto;
-	private String token;
-	private int expira_en;
+	//private String token;
+	//private int expira_en;
 	private boolean cambiar_contrasenia;
 	private UserDetails userDetails;
 

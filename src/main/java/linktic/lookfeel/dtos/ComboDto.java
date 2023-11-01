@@ -17,6 +17,4 @@ public class ComboDto {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	
-	
 }

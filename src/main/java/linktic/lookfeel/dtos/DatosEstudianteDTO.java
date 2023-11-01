@@ -22,6 +22,8 @@ public class DatosEstudianteDTO {
 	private Long codigoEstudiante;
 
 	private String nombreEstudiante;
+	
+	private Long vigencia;
 
 	private ColegioDTO institucion;
 

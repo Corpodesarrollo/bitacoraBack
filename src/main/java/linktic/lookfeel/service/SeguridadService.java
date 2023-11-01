@@ -13,15 +13,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import linktic.lookfeel.dtos.grupoServicioDTO;
 import linktic.lookfeel.model.Personal;
 import linktic.lookfeel.model.Response;
 import linktic.lookfeel.model.Usuario;
+import linktic.lookfeel.repositories.PerfilRepository;
 import linktic.lookfeel.repositories.PersonalRepository;
 import linktic.lookfeel.repositories.SeguridadRepository;
-import linktic.lookfeel.security.repositories.GrupoServicioRepository;
-import linktic.lookfeel.repositories.PerfilRepository;
-import linktic.lookfeel.util.*;
+import linktic.lookfeel.util.Utilidades;
 
 /**
  *
@@ -55,8 +53,7 @@ public class SeguridadService implements ISeguridadService {
 	@Autowired
 	private PerfilRepository perfilRepository;
 	
-	@Autowired
-	private GrupoServicioRepository grupoServicioRepository;
+	
 
 	@Override
 	public Response cambiarContrasena(String usuLogin, String contrasenaActual, String contrasenaNueva,
@@ -248,30 +245,6 @@ public class SeguridadService implements ISeguridadService {
 		return respuesta;
 	}
 	
-	@Override
-	public List<grupoServicioDTO> consultarPermisosPorPerfil(int idPerfilCodigo) {
-
-		List<grupoServicioDTO> listaGrupoServicio = new ArrayList<>();
-		List<Object[]> listData = null;
-		
-		try {
-			if (idPerfilCodigo <= 0) {
-				throw new Exception("El id del perfil codigo es inferior o igual a cero, digite un numero entero y superior a cero");
-			}
-			
-			listData = grupoServicioRepository.findGrupoServicioByPerfilCodigo(idPerfilCodigo);
-			
-			if (listData != null && !listData.isEmpty()) {
-				for (Object[] regData : listData) {
-					listaGrupoServicio.add(new grupoServicioDTO(Integer.parseInt(regData[0].toString()), regData[1].toString()));
-				}
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return listaGrupoServicio;
-	}
+	
 
 }

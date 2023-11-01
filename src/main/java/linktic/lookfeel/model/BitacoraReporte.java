@@ -1,17 +1,10 @@
 package linktic.lookfeel.model;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 public class BitacoraReporte {
