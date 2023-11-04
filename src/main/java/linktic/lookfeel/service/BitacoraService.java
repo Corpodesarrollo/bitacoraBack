@@ -2,6 +2,7 @@ package linktic.lookfeel.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class BitacoraService implements IBitacoraService{
 		Bitacora b = new Bitacora();
 		b.setUsuario(bitacora.getUsuario());
 		b.setModulo(bitacora.getModulo());
-		b.setFechaRegistro(LocalDateTime.now());
+		b.setFechaRegistro(LocalDateTime.now(ZoneId.of("America/Bogota")));
 		b.setTipoLog(bitacora.getTipoLog());
 		b.setDescripcion(bitacora.getDescripcion());
 		b.setSubmodulo(bitacora.getSubmodulo());
