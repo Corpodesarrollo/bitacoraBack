@@ -22,7 +22,7 @@ public class Bitacora {
 	    private LocalDateTime fechaRegistro;
 		
 		@Column(name="USUARIO")
-	    private Long usuario;
+	    private String usuario;
 		
 		@Column(name="MODULO")
 	    private Long modulo;
@@ -47,6 +47,9 @@ public class Bitacora {
 		
 		@Column(name="DESCRIPCION",length = 250)
 	    private String descripcion;
+		
+		@Column(name="TOTAL")
+	    private int totalPag;
 
 		public Long getId() {
 			return id;
@@ -64,11 +67,11 @@ public class Bitacora {
 			this.fechaRegistro = fechaRegistro;
 		}
 
-		public Long getUsuario() {
+		public String getUsuario() {
 			return usuario;
 		}
 
-		public void setUsuario(Long usuario) {
+		public void setUsuario(String usuario) {
 			this.usuario = usuario;
 		}
 
@@ -134,5 +137,13 @@ public class Bitacora {
 
 		public void setDescripcion(String descripcion) {
 			this.descripcion = descripcion;
+		}
+		
+		public int getTotalPag() {
+			return this.totalPag;
+		}
+
+		public void setTotalPag(int totalPag) {
+			this.totalPag = totalPag;
 		}
 }

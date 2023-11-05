@@ -5,10 +5,16 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -75,7 +81,7 @@ public class BitacoraService implements IBitacoraService{
 	@Override
 	public Response insertarBitacora(BitacoraDto bitacora) {
 		Bitacora b = new Bitacora();
-		b.setUsuario(bitacora.getUsuario());
+		b.setUsuario(bitacora.getUsuario().toString());
 		b.setModulo(bitacora.getModulo());
 		b.setFechaRegistro(LocalDateTime.now(ZoneId.of("America/Bogota")));
 		b.setTipoLog(bitacora.getTipoLog());
@@ -119,7 +125,7 @@ public class BitacoraService implements IBitacoraService{
 		List<Personal> personal=new ArrayList<>();
 		List<ComboDto> lista = new ArrayList<>();
 		
-		if(usuario.getNivelPerfil()==6) {
+		if(usuario.getNivelPerfil()==6 || usuario.getNivelPerfil()==4) {
 			personal = personalRepository.getUsuarioXInstutucion(usuario.getInstitucion());			
 		}
 		else if(usuario.getNivelPerfil()==1 && usuario.getPerfil()==110) {
@@ -194,10 +200,14 @@ public class BitacoraService implements IBitacoraService{
 	
 	@Override
 	public Response exportarBitacoraAPdf(long id) {
-		// TODO Auto-generated method stub
+									
 		try {
 			BufferedImage logo = ImageIO.read(getClass().getResource("/imagenes/LOGOSED2.png"));
 			List<BitacoraReporte> bitacoras = bitacoraReporteRepository.consultaBitacoraReporte(id);
+			for (BitacoraReporte item : bitacoras) {
+				if(item.getDescripcion()!=null)
+					item.setDescripcion(this.descripcionDecode(item.getDescripcion()));
+			}
 			byte[] respuesta = Utilidades.exportReportToPdf(bitacoras, "plantillaBitacoraPdf", new HashMap<String, Object>() {{ put("logo", logo); }});
 			return new Response(HttpStatus.OK.value(), "Reporte generado correctamente", respuesta);
 		} catch (Exception e) {
@@ -207,15 +217,29 @@ public class BitacoraService implements IBitacoraService{
 	
 	@Override
 	public Response exportarBitacoraAExcel(long id) {
-		// TODO Auto-generated method stub
+									
 		try {
 			BufferedImage logo = ImageIO.read(getClass().getResource("/imagenes/LOGOSED2.png"));
 			List<BitacoraReporte> bitacoras = bitacoraReporteRepository.consultaBitacoraReporte(id);
+			for (BitacoraReporte item : bitacoras) {
+				if(item.getDescripcion()!=null)
+					item.setDescripcion(this.descripcionDecode(item.getDescripcion()));
+			}
 			byte[] respuesta = Utilidades.exportReportToXlsx(bitacoras, "plantillaBitacoraPdf", new HashMap<String, Object>() {{ put("logo", logo); }});
 			return new Response(HttpStatus.OK.value(), "Reporte generado correctamente", respuesta);
 		} catch (Exception e) {
 			return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
 		}
+	}
+	
+	private String descripcionDecode(String descripcion) throws JsonMappingException, JsonProcessingException {
+		StringBuilder result = new StringBuilder();
+		Map<Object,Object> map = new ObjectMapper().readValue(descripcion, HashMap.class);
+		for (Object key : map.keySet()) {
+			result.append(key + ": " + map.get(key) + "\n");
+	    }
+		return result.toString();
+//		return descripcion;
 	}
 	
 	

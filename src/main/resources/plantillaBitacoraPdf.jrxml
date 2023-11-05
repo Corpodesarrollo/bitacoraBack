@@ -103,7 +103,7 @@
 					<text><![CDATA[Descripción]]></text>
 				</staticText>
 				<textField>
-					<reportElement stretchType="ContainerHeight" x="20" y="40" width="530" height="30" uuid="47e45a62-53cf-4da9-81ab-beb14cea68c4"/>
+					<reportElement x="20" y="40" width="530" height="187" uuid="47e45a62-53cf-4da9-81ab-beb14cea68c4"/>
 					<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
 				</textField>
 			</frame>

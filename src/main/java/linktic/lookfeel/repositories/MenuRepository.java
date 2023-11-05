@@ -14,7 +14,7 @@ public interface MenuRepository extends JpaRepository<Categoria, Long> {
             "FROM CATEGORIA, MENU \n" +
             "WHERE CATCODIGO=SERCATCODIGO AND GRUSERCODIGO IN \n" +
             "(SELECT SERPERGRUSERCODIGO FROM SERVICIO_PERFIL, GRUPO_SERVICIO \n" +
-            "WHERE GRUSERCODIGO=SERPERGRUSERCODIGO AND SERPERFPERFCODIGO=:perfil AND (GRUSERPROGRAMA=0 OR GRUSERPROGRAMA IN \n" +
+            "WHERE GRUSERCODIGO=SERPERGRUSERCODIGO AND (:perfil = 0 OR SERPERFPERFCODIGO=:perfil) AND (GRUSERPROGRAMA=0 OR GRUSERPROGRAMA IN \n" +
             "(SELECT INSPROPROGRAMA FROM INSTITUCION_PROGRAMA WHERE INSPROCOLEGIO=:institucion))) AND SERVISIBLE=1 AND SERCATCODIGO NOT IN \n" +
             "(16,17,18,19) AND CATNOMBRE IS NOT NULL GROUP BY SERCATCODIGO, CATNOMBRE, CATIMAGEN")
     List<Object[]> getListGeneralCategory(Long institucion, String perfil);
@@ -31,7 +31,7 @@ public interface MenuRepository extends JpaRepository<Categoria, Long> {
             "WHERE SERPUBLICO=0 AND SERVISIBLE=1 AND GRUSERCODIGO IN \n" +
             "(SELECT SERVICIO_PERFIL.SERPERGRUSERCODIGO \n" +
             "FROM SERVICIO_PERFIL, PERFIL \n" +
-            "WHERE SERVICIO_PERFIL.SERPERFPERFCODIGO=:perfil AND SERVICIO_PERFIL.SERPERFPERFCODIGO = PERFCODIGO AND SERPERGRUSERCODIGO IN\n" +
+            "WHERE (:perfil = 0 OR SERVICIO_PERFIL.SERPERFPERFCODIGO=:perfil) AND SERVICIO_PERFIL.SERPERFPERFCODIGO = PERFCODIGO AND SERPERGRUSERCODIGO IN\n" +
             "(SELECT GRUSERCODIGO FROM GRUPO_SERVICIO WHERE GRUSERPROGRAMA=0 OR GRUSERPROGRAMA IN\n" +
             "(SELECT INSPROPROGRAMA FROM INSTITUCION_PROGRAMA\n" +
             "WHERE INSPROCOLEGIO=:institucion))) AND SERCATCODIGO NOT IN (16,17,18,19) AND SERNOMBRE IS NOT NULL -- arregalr machetaso\n" +
@@ -49,7 +49,7 @@ public interface MenuRepository extends JpaRepository<Categoria, Long> {
             "from servicio where serpublico=0 and servisible=1 and GruSerCodigo in \n" +
             "(select DISTINCT servicio_perfil.SerPerGruSerCodigo \n" +
             "from servicio_perfil, perfil \n" +
-            "where servicio_perfil.SerPerfPerfCodigo=:perfil))")
+            "where (:perfil = 0 OR servicio_perfil.SerPerfPerfCodigo=:perfil)))")
     List<Object[]> getListCategoryPrivateParam(String perfil);
 
 

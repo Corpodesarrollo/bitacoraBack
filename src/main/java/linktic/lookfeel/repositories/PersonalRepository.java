@@ -60,8 +60,8 @@ public interface PersonalRepository extends JpaRepository<Personal, Long> {
 	List<String> findByPersonalPorPerfil(String perfilId, String colegioId, String localidadId, String sedeId, String jornadaId);
 
 	 @Query(nativeQuery = true, value = "select p.* from personal p"
-	    		+ "join usuario u on p.pernumdocum = u.usulogin\n" +
-	            "join g_jerarquia gjer on gjer.g_jercodigo = usucodjerar\n" +
-	            "where g_jerinst= :codInstitucion")
+							    	  + " join usuario u on p.pernumdocum = u.usulogin"
+							          + " join g_jerarquia gjer on gjer.g_jercodigo = usucodjerar"
+							          + " where g_jerinst= :codInstitucion")
 	    List<Personal> getUsuarioXInstutucion(int codInstitucion);
 }

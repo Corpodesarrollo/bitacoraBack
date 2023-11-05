@@ -11,13 +11,14 @@ import linktic.lookfeel.model.Bitacora;
 
 public interface BitacoraRepository extends PagingAndSortingRepository<Bitacora, Long>{
 	
-	@Query(nativeQuery = true, value = "SELECT b.* from bitacora b"
-			+ " where b.fecha_registro>=:fechaInicio and b.fecha_registro<=:fechaFin "
-			+ " and b.usuario = case when :usuario is null then b.usuario else :usuario end "
-			+ " and b.colegio = case when :colegio is null then b.colegio else :colegio end "
-			+ " and b.sede = case when :sede is null then b.sede else :sede end "
-			+ " and b.jornada = case when :jornada is null then b.jornada else :jornada end "
-			+ " and b.tipo_log_bitacora = case when :tipoLog is null then b.tipo_log_bitacora else :tipoLog end "
+	@Query(nativeQuery = true, value = "SELECT b.*, (SELECT count(*) from bitacora b where (b.fecha_registro between :fechaInicio and :fechaFin) and (:usuario IS NULL or b.usuario = :usuario) and (:colegio = 0 or b.colegio = :colegio) and (:sede = 0 or b.sede = :sede) and (:jornada = 0 or b.jornada = :jornada) and (:tipoLogBitacora = 0 or b.tipo_log_bitacora = :tipoLogBitacora) and b.descripcion like :descripcion) total"
+			+ " from bitacora b"
+			+ " where (b.fecha_registro between :fechaInicio and :fechaFin)"
+			+ " and (:usuario IS NULL or b.usuario = :usuario)"
+			+ " and (:colegio = 0 or b.colegio = :colegio)"
+			+ " and (:sede = 0 or b.sede = :sede)"
+			+ " and (:jornada = 0 or b.jornada = :jornada)"
+			+ " and (:tipoLogBitacora = 0 or b.tipo_log_bitacora = :tipoLogBitacora)"
 			+ " and b.descripcion like :descripcion ")
-	List<Bitacora> consultaBitacora(Date fechaInicio,Date fechaFin,String usuario,Long colegio,Long sede,Long jornada,Long tipoLog,String descripcion, Pageable pageable);
-}
+	List<Bitacora> consultaBitacora(Date fechaInicio,Date fechaFin,String usuario,Long colegio,Long sede,Long jornada,Long tipoLogBitacora,String descripcion, Pageable pageable);
+}//(:id = 0 or b.id = :id)")

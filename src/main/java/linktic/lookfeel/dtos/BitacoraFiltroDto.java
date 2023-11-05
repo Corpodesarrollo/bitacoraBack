@@ -6,12 +6,12 @@ public class BitacoraFiltroDto {
 	
 	private Date fechaInicio;
 	private Date fechaFin;
-	private String usuario;
-	private Long colegio;
-	private Long sede;
-	private Long jornada;
-	private Long tipoLogBitacora;
-	private String descripcion;
+	private String usuario = "";
+	private Long colegio = 0L;
+	private Long sede = 0L;
+	private Long jornada = 0L;
+	private Long tipoLogBitacora = 0L;
+	private String descripcion = "";
 	private int paginaActual;
 	private int itemsPagina;
 	public Date getFechaInicio() {
@@ -30,13 +30,13 @@ public class BitacoraFiltroDto {
 		return usuario;
 	}
 	public void setUsuario(String usuario) {
-		this.usuario = usuario;
+		this.usuario = usuario==null? "" : usuario;
 	}
 	public String getDescripcion() {
 		return descripcion;
 	}
 	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
+		this.descripcion = descripcion==null? "" : descripcion;
 	}
 	public int getPaginaActual() {
 		return paginaActual;
@@ -54,24 +54,24 @@ public class BitacoraFiltroDto {
 		return colegio;
 	}
 	public void setColegio(Long colegio) {
-		this.colegio = colegio;
+		this.colegio = colegio==null? 0 : colegio;
 	}
 	public Long getSede() {
 		return sede;
 	}
 	public void setSede(Long sede) {
-		this.sede = sede;
+		this.sede = sede==null? 0 : sede;
 	}
 	public Long getJornada() {
 		return jornada;
 	}
 	public void setJornada(Long jornada) {
-		this.jornada = jornada;
+		this.jornada = jornada==null? 0 : jornada;
 	}
 	public Long getTipoLogBitacora() {
 		return tipoLogBitacora;
 	}
 	public void setTipoLogBitacora(Long tipoLogBitacora) {
-		this.tipoLogBitacora = tipoLogBitacora;
+		this.tipoLogBitacora = tipoLogBitacora==null? 0 : tipoLogBitacora;
 	}
 }
