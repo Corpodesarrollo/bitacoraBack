@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -146,7 +147,7 @@ public class ConsultaExternaService implements IConsultaExternaService {
 		Constante metodologia = new Constante();
 		Grado grado = new Grado();
 		Grupo grupo = new Grupo();
-		List<Periodos> periodo = new ArrayList<>();
+		Periodos periodo = new Periodos();
 		
 		DatosEstudianteDTO datosEstudianteDTO = new DatosEstudianteDTO();
 		Constante tipoDocumentoEst = new Constante();
@@ -220,8 +221,8 @@ public class ConsultaExternaService implements IConsultaExternaService {
 								
 							}
 							
-							periodo = consultaPeriodos();
-							datosEstudianteDTO.setPeriodos(periodo);
+							periodo = consultaPeriodos(institucion.getCodigo(), institucion.getVigencia());
+							datosEstudianteDTO.setPeriodos(generarLista(periodo));
 							
 							return new Response(HttpStatus.OK.value(), "Respuesta Exitosa.", datosEstudianteDTO);
 						}else {
@@ -350,10 +351,10 @@ public class ConsultaExternaService implements IConsultaExternaService {
 	}
 	
 		
-	private List<Periodos> consultaPeriodos() {
-		List<Periodos> respuesta = new  ArrayList<>();
+	private Periodos consultaPeriodos(long idInstitucion, long idVigencia) {
+		Periodos respuesta = new Periodos();
 		try {
-			respuesta = periodosRepository.listaPeriodos();
+			respuesta = periodosRepository.listaPeriodos(idInstitucion, idVigencia);
 		} catch (Exception e) {
 			respuesta = null;
 		}
@@ -369,6 +370,41 @@ public class ConsultaExternaService implements IConsultaExternaService {
 			info = null;
 		}
 		return info;
+	}
+	
+	private List<Periodos> generarLista(Periodos periodoFinal){
+		List<Periodos> listaPeriodos = new ArrayList<>();
+		
+		for (int i = 1; i <= Integer.parseInt(periodoFinal.getId())-1; i++) {
+			Periodos periodo = new Periodos();
+			String NumeroLetras = obtenerNumeroLetras(i);
+			periodo.setId(String.valueOf(i));
+			periodo.setNombre(NumeroLetras);
+			listaPeriodos.add(periodo);
+		}
+		listaPeriodos.add(periodoFinal);
+		return listaPeriodos;
+	}
+	
+	private String obtenerNumeroLetras(int numero) {
+		switch (numero) {
+        case 1:
+            return "Primero";
+        case 2:
+            return "Segundo";
+        case 3:
+            return "Tercero";
+        case 4:
+            return "Cuarto";
+        case 5:
+            return "Quinto";
+        case 6:
+            return "Sexto";
+        case 7:
+            return "Septimo";
+        default:
+            return "Número Desconocido";            
+		}
 	}
 	
 	@Override

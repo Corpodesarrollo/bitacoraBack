@@ -51,7 +51,7 @@ public class MensajeService implements IMensajeService {
 
 	private static final Logger log = LoggerFactory.getLogger(MensajeService.class);
 
-	DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd-MMM-yyyy", java.util.Locale.US);
+	DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
 	LocalDate fechaActual = LocalDate.now();
 	Calendar calendar = Calendar.getInstance();
 
