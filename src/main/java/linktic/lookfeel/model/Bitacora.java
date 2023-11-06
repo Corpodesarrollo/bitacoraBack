@@ -49,7 +49,7 @@ public class Bitacora {
 		@Column(name="DESCRIPCION",length = 250)
 	    private String descripcion;
 		
-		@Column(name="TOTAL")
+		@Column(name="TOTAL_REG")
 	    private int totalPag;
 
 		public Long getId() {
