@@ -40,5 +40,8 @@ public class PoliticasProteccion {
 	
 	@Column(name="ESTADO", length=1)
     private Long  estado;
+	
+	@Column(name="HABILITADO", length=1)
+    private Long  habilitado;
 
 }

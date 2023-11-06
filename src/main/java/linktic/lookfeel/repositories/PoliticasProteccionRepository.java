@@ -29,7 +29,7 @@ public interface PoliticasProteccionRepository extends JpaRepository<PoliticasPr
 	List<PoliticasProteccion> verPoliticasActivas();
 	
 	@Query(nativeQuery = true, value = "SELECT * FROM POLITICA_PROTECCION_DATOS p\r\n" 
-			+ "WHERE p.CODIGO_TIPO = 'POLITICA_USO' ORDER BY VERSION DESC")
+			+ "WHERE p.CODIGO_TIPO = 'POLITICA_USO' AND HABILITADO = 1 ORDER BY VERSION DESC")
 	List<PoliticasProteccion> verPoliticasUso();
 	
 	@Query(nativeQuery = true, value = "SELECT MAX(p.VERSION) version from POLITICA_PROTECCION_DATOS p")

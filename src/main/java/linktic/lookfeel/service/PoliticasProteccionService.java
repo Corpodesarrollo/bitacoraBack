@@ -142,8 +142,19 @@ public class PoliticasProteccionService implements IPoliticasProteccionService {
 	
 	@Override
 	public Response eliminarPoliticaUso(Long idPolitica, String idUsuario){
+		PoliticasProteccion politicaEncontrada;
 		try {
-					politicasProteccionRepository.deleteById(idPolitica);
+				politicaEncontrada = politicasProteccionRepository.findById(idPolitica).get();
+				
+				if(politicaEncontrada != null) {
+					if(politicaEncontrada.getEstado()== 1) {
+						return new Response(HttpStatus.BAD_REQUEST.value(), "No se puede eliminar la politica, Se encuentra activa!", null);
+					}
+					politicaEncontrada.setHabilitado(0L);
+					politicasProteccionRepository.save(politicaEncontrada);
+				}
+				
+				
 			log.info("Respuesta Exitosa al eliminar politica de uso.");
 			return new Response(HttpStatus.OK.value(), "La politica de uso fue eliminada Exitosamente!", null);
 			
