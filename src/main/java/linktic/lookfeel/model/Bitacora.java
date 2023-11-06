@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "BITACORA")
@@ -49,7 +50,7 @@ public class Bitacora {
 		@Column(name="DESCRIPCION",length = 250)
 	    private String descripcion;
 		
-		@Column(name="TOTAL_REG")
+		@Transient
 	    private int totalPag;
 
 		public Long getId() {
