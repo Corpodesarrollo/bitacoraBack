@@ -16,8 +16,8 @@ public interface BitacoraReporteRepository extends PagingAndSortingRepository<Bi
 			+ " from bitacora b, personal ps, perfil p, servicio s, categoria c, tipo_log_bitacora t"
 			+ " where b.usuario = ps.pernumdocum"
 			+ " and b.perfil = p.perfcodigo"
-			+ " and c.catcodigo = b.modulo"
-			+ " and s.sercodigo = b.submodulo"
+			+ " and (b.modulo is null or c.catcodigo = b.modulo)"
+			+ " and (b.submodulo is null or s.sercodigo = b.submodulo)"
 			+ " and b.tipo_log_bitacora = t.id"
 			+ " and (:id = 0 or b.id = :id)")
 	List<BitacoraReporte> consultaBitacoraReporte(long id);
