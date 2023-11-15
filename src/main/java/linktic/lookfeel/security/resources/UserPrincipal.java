@@ -2,6 +2,7 @@ package linktic.lookfeel.security.resources;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import linktic.lookfeel.security.services.SecurityService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -69,45 +70,15 @@ public class UserPrincipal implements UserDetails {
      */
 
 
-    public static UserPrincipal buildNew(String username, String password) {
+    public static UserPrincipal buildNew(String sessionKey, Long timeLImitSession, String username, String password) {
 
-        String token = getJWTTokenNew(username, password);
+        String token = getJWTTokenNew(sessionKey, timeLImitSession, username, password);
 
         return new UserPrincipal(token);
     }
 
 
-
-    /**
-     * Gets the JWT token.
-     *
-     * @param username the username
-     * @param authorities the authorities
-     * @return the JWT token
-     */
-    private static String getJWTToken(String username, List<GrantedAuthority> authorities) {
-        String secretKey = "mySecretKey";
-        List<GrantedAuthority> grantedAuthorities = authorities;
-
-        String token = Jwts
-                .builder()
-                .setId("OBS")
-                .setSubject(username.toString())
-                .claim("authorities",
-                        grantedAuthorities.stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .collect(Collectors.toList()))
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 4000000))
-                .signWith(SignatureAlgorithm.HS512,
-                        secretKey.getBytes()).compact();
-
-        return "Bearer " + token;
-    }
-
-    private static String getJWTTokenNew(String username, String password) {
-        String secretKey = "mySecretKey";
-
+    private static String getJWTTokenNew(String sessionKey, long timeLimitSession, String username, String password) {
 
         String token = Jwts
                 .builder()
@@ -116,9 +87,9 @@ public class UserPrincipal implements UserDetails {
                 .claim("authorities",
                         password)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 4000000))
+                .setExpiration(new Date(System.currentTimeMillis() + timeLimitSession))
                 .signWith(SignatureAlgorithm.HS512,
-                        secretKey.getBytes()).compact();
+                        sessionKey.getBytes()).compact();
 
         return "Bearer " + token;
     }

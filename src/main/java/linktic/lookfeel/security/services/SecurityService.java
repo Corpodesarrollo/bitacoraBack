@@ -8,6 +8,7 @@ import linktic.lookfeel.security.repositories.UsuarioRepository;
 import linktic.lookfeel.security.resources.GrupoServicio;
 import linktic.lookfeel.security.resources.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,15 @@ public class SecurityService implements ISecurityService {
     @Autowired
     private GrupoServicioRepository repositoryGrupo;
 
+
+    private Long timeMilisecondSession ;
+
+    public static String sessionKey ;
+
+    public SecurityService(@Value("${login.key-session}") String key, @Value("${login.time-milisecond-session}") long timeLimiSecond) {
+        this.sessionKey = key;
+        this.timeMilisecondSession = timeLimiSecond;
+    }
 
 
     /* (non-Javadoc)
@@ -65,9 +75,7 @@ public class SecurityService implements ISecurityService {
     @Override
     @Transactional
     public UserDetails generateToken(String username, String password) throws UsernameNotFoundException {
-
-
-        return UserPrincipal.buildNew(username, password);
+        return UserPrincipal.buildNew(this.sessionKey, this.timeMilisecondSession, username, password);
     }
 
     @Override

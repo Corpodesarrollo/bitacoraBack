@@ -25,7 +25,7 @@ public interface PersonalRepository extends JpaRepository<Personal, Long> {
 	@Query(nativeQuery = true, value = "SELECT DISTINCT\r\n"
 			+ "    lower(to_char(p.peremail)) AS email\r\n"
 			+ "FROM\r\n"
-			+ "    personal_09102023 p\r\n"
+			+ "    personal p\r\n"
 			+ "WHERE\r\n"
 			+ "    p.pernumdocum NOT IN (\r\n"
 			+ "        SELECT\r\n"

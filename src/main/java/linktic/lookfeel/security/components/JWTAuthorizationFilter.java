@@ -2,6 +2,7 @@ package linktic.lookfeel.security.components;
 
 
 import io.jsonwebtoken.*;
+import linktic.lookfeel.security.services.SecurityService;
 import linktic.lookfeel.util.Utilidades;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,9 +30,17 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     
     /** The prefix. */
     private final String PREFIX = "Bearer ";
-    
+
     /** The secret. */
     private final String SECRET = "mySecretKey";
+
+    private static List<String> PATH_PERMIT_NO_AUTH;
+
+    {
+        PATH_PERMIT_NO_AUTH = new ArrayList<>();
+        PATH_PERMIT_NO_AUTH.add("/api/apoyo/seguridad/login");
+        PATH_PERMIT_NO_AUTH.add("/apoyo-api/api/apoyo/seguridad/login");
+    }
 
     /* (non-Javadoc)
      * @see org.springframework.web.filter.OncePerRequestFilter#doFilterInternal(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain)
@@ -46,7 +56,17 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.clearContext();
                 }
             } else {
-                SecurityContextHolder.clearContext();
+                if (request != null && request.getRequestURI() != null) {
+                    if (!PATH_PERMIT_NO_AUTH.contains(request.getRequestURI())) {
+                        SecurityContextHolder.clearContext();
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "No tiene permiso");
+                    }
+                } else {
+                    SecurityContextHolder.clearContext();
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "No tiene permiso");
+                }
             }
             chain.doFilter(request, response);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException e) {
@@ -67,8 +87,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
      * @return the claims
      */
     private Claims validateToken(HttpServletRequest request) {
+        String secretKey = SecurityService.sessionKey;
         String jwtToken = request.getHeader(HEADER).replace(PREFIX, "");
-        return Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(jwtToken).getBody();
+        return Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(jwtToken).getBody();
     }
 
     /**

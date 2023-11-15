@@ -501,7 +501,7 @@ public class ConsultaExternaService implements IConsultaExternaService {
 				throw new Exception("El numero de registros por pagina es inferior o igual a cero, digite un numero entero y superior a cero");
 			}
 			
-			listData = estudianteRepository.consultaTotalRegTotalEstudiantesPorInstituto(codigoLocalidad);
+			listData = estudianteRepository.consultaTotalRegNumEstudiantesPorInstituto(codigoLocalidad);
 			
 			if (listData == null || listData.isEmpty()) {
 				throw new Exception("No se encontraron registros");
@@ -514,7 +514,7 @@ public class ConsultaExternaService implements IConsultaExternaService {
 			}
 			
 			listData = null;
-			listData = estudianteRepository.consultaPaginadaTotalEstudiantesPorInstituto(codigoLocalidad,numPagina, numRegPorPagina);
+			listData = estudianteRepository.consultaPaginadaNumEstudiantesPorInstituto(codigoLocalidad,numPagina, numRegPorPagina);
 			
 			listaTotalEstudiantesPorInstitucion = new ArrayList<>();
 			

@@ -1,15 +1,18 @@
 package linktic.lookfeel.dtos;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PerfilDTO {
 	
 	private int id;
 	private String nombre;
 	private String etiqueta;
 	private int idPerfilNivel;
+	private int codJerarquia;
 
 }

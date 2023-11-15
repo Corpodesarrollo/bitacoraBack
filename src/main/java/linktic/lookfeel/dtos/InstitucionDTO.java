@@ -13,5 +13,6 @@ public class InstitucionDTO {
 	private String nombre;
 	private FotoDTO foto_escudo;
 	private LocalidadDTO localidad;
+	private Long vigencia;
 
 }

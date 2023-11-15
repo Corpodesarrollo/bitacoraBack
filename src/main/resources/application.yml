@@ -1,0 +1,134 @@
+info:
+    app:
+        name: LookAndFeelApi
+        version: 1.0.0
+#server:
+#    port: 8080
+login:
+    time-milisecond-session: 3960000
+    key-session: "mySecretKey"
+
+spring:
+    profiles:
+        active: linktic
+    datasource:
+        driver-class-name: oracle.jdbc.OracleDriver
+        password: pruebas
+        url: jdbc:oracle:thin:@//172.16.65.12:1521/MATRIDES
+        username: APOYO_ESCOLAR
+    jpa:
+        database-platform: org.hibernate.dialect.Oracle12cDialect
+        hibernate:
+            ddl-auto: none
+            use-new-id-generator-mappings: false
+        open-in-view: false
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.Oracle10gDialect
+                format_sql: true
+                jdbc:
+                    time_zone: UTC
+        show-sql: true
+    mail:
+        host: smtp.office365.com
+        password: '@p@y@2023'
+        port: 587
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+        test: n/a
+        username: apoyoescolar@educacionbogota.gov.co
+    servlet:
+        multipart:
+            max-file-size: 50MB
+            max-request-size: 50MB
+
+boletines:
+    extension:
+        allowed: .zip
+    path: C:.Reportes.Apoyo_Escolar.private.boletin.
+    size:
+        allowed: 10485760
+clave:
+    encriptado: Apoy0#sco4r203%2
+config:
+    header: Access-Control-Allow-Headers, Content-Type, Authorization, 'Access-Control-Allow-Origin', 'Access-Control-Allow-Credentials'
+    methods: GET, POST, PUT, DELETE, OPTIONS
+    origins: http://localhost:4200, https://localhost:4200, https://pruebas-sed.linktic.com:8080, http://localhost:8080, http://54.208.141.162:8080, http://localhost:4200, http://172.16.70.20:1910, http://172.16.70.11:7633, https://pruebas-sed.linktic.com, https://apoyopruebas.educacionbogota.edu.co, https://apoyofab.educacionbogota.edu.co, https://apoyoescolar.educacionbogota.edu.co
+
+email:
+    body: <html><body><h2>Estimad@ Concursante</h2><br /><br /><p>Por medio del presente nos permitimos notificarle que ha sido aceptado para participar en el concurso. Para terminar con los datos de registro por favor ingrese al siguiente <a href="https://apoyoescolar.educacionbogota.edu.co/apoyo_escolar/Inicio.dos">enlace</a> con su correo electr&oacute;nico institucional y la contrase&ntilde;a de este, all&iacute; podr&aacute; culminar el diligenciamiento del formulario para terminar su inscripci&oacute;n.</p><br /><br /><p>Atentamente,</p><br /><p>SED</p></body></html>
+    emailTest: alexander.munoz@linktic.com
+foto:
+    pathPersonal: C:.Reportes.Apoyo_Escolar.private.img.fotoPersona
+    pathSilueta: C:.Reportes.Apoyo_Escolar.private.img.silueta
+localidades:
+    tipo: 7
+manual:
+    extension:
+        allowed: .pdf
+    path: C:.Reportes.Apoyo_Escolar.private.manuales
+    size:
+        allowed: 10485760
+mensajes:
+    editar: 183
+    eliminar: 182
+    enviar: 180
+    ver: 181
+nivel:
+    maximo:
+        jerarquia: 5
+office:
+    client_id: 5325b763-d2ea-40a6-bd0b-dbe293790ee4
+    client_id_edu: 1a826e8e-9af6-4381-be8a-fe0cef5a60cd
+    client_secret: t1b8Q~CcgefKykdvBfaER.wqN9-bXAJQllh6PbNp
+    client_secret_edu: Nmj8Q~wHIUDNK8-zeRI~nzuHkGpxDLwB4yMWgcm0
+    email:
+        validate:
+            edu: .edu.co
+            gov: .gov.co
+    grant_type: client_credentials
+    scope: https://graph.microsoft.com/.default
+    tenant: '371179b5-c8a0-43be-8083-95bab26bc650  '
+    tenant_edu: 51c89e2c-0ac9-4024-80f1-3a864a694b15
+politicas:
+    crear: 190
+    eliminar: 191
+
+---
+spring:
+    profiles: linktic
+    datasource:
+        driver-class-name: oracle.jdbc.OracleDriver
+        password: pruebas
+        url: jdbc:oracle:thin:@//172.16.65.12:1521/MATRIDES
+        username: APOYO_ESCOLAR
+foto:
+    pathPersonal: C:.Reportes.Apoyo_Escolar.private.img.fotoPersona
+    pathSilueta: C:.Reportes.Apoyo_Escolar.private.img.silueta
+manual:
+    path: C:.Reportes.Apoyo_Escolar.private.manuales
+email:
+    body: <html><body><h2>Estimad@ Concursante</h2><br /><br /><p>Por medio del presente nos permitimos notificarle que ha sido aceptado para participar en el concurso. Para terminar con los datos de registro por favor ingrese al siguiente <a href="https://pruebas-sed.linktic.com/apoyo_escolar/Inicio.dos">enlace</a> con su correo electr&oacute;nico institucional y la contrase&ntilde;a de este, all&iacute; podr&aacute; culminar el diligenciamiento del formulario para terminar su inscripci&oacute;n.</p><br /><br /><p>Atentamente,</p><br /><p>SED</p></body></html>
+    emailTest: alexander.munoz@linktic.com
+boletines:
+    path: C:.Reportes.Apoyo_Escolar.private.boletin.
+
+---
+spring:
+    profiles: prepruebas
+    datasource:
+        jndi-name: jdbc/apoyoWeb
+email:
+    body: <html><body><h2>Estimad@ Concursante</h2><br /><br /><p>Por medio del presente nos permitimos notificarle que ha sido aceptado para participar en el concurso. Para terminar con los datos de registro por favor ingrese al siguiente <a href="https://apoyofab.educacionbogota.edu.co:7733/apoyo_escolar/Inicio.dos">enlace</a> con su correo electr&oacute;nico institucional y la contrase&ntilde;a de este, all&iacute; podr&aacute; culminar el diligenciamiento del formulario para terminar su inscripci&oacute;n.</p><br /><br /><p>Atentamente,</p><br /><p>SED</p></body></html>
+    emailTest: alexander.munoz@linktic.com
+foto:
+    pathPersonal: .Reportes.Apoyo_Escolar.private.img.fotoPersona
+    pathSilueta: .Reportes.Apoyo_Escolar.private.img.silueta
+manual:
+    path: .Reportes.Apoyo_Escolar.private.manuales
+boletines:
+    path: .Reportes.Apoyo_Escolar.private.boletin.

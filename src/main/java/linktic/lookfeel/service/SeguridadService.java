@@ -70,15 +70,14 @@ public class SeguridadService implements ISeguridadService {
 				if (iterator.getUsuPassword() != null && iterator.getUsuPassword().equals(ajusteContraseña)
 						&& !iterator.getUsuPerNumDocum().toString().equals(contrasenaNueva)) {
 					if (contrasenaNueva.equals(confirmacionContraseña)) {
-						//seguridadRepository.updateByPerNumDocumForUniquePass(iterator.getUsuLogin(),iterator.getUsuPassword(), passNew, usuPasswordTemporal);
 						usuarioUpdate = iterator;
 					} else {
 						return new Response(HttpStatus.NO_CONTENT.value(),
-								"Contraseña nueva no coincide con su confirmacion de contraseña.", null);
+								"La contraseña nueva no coincide con su confirmación de contraseña. Verifica la información ingresada.", null);
 					}
 
 				} else {
-					return new Response(HttpStatus.NO_CONTENT.value(), "Contraseña actual es invalidad.", null);
+					return new Response(HttpStatus.NO_CONTENT.value(), "La contraseña actual es invalidad.", null);
 				}
 
 			}
@@ -87,17 +86,16 @@ public class SeguridadService implements ISeguridadService {
 					seguridadRepository.updateAllPasswords(usuarioUpdate.getUsuLogin(), usuarioUpdate.getUsuPassword(), passNew, "0");
 			} catch (Exception e) {
 				return new Response(HttpStatus.BAD_REQUEST.value(),
-						"Fallo el cambio de la contraseña Se ha generado una excepcion, Comucate con el administrador.", e);
+						"Se ha generado una excepción con el cambio de la contraseña Se ha generado una excepción, Comunícate con el administrador para verificar que sucede.", e);
 			}
 			
 
 		} else {
 			return new Response(HttpStatus.NO_CONTENT.value(),
-					"Fallo el cambio de la contraseña porque el usuario No Exite.", null);
+					"Se ha generado una falla con el cambio de la contraseña, porque el usuario no existe en el sistema.", null);
 		}
 		return new Response(HttpStatus.NO_CONTENT.value(),
-				"Su contraseña ha sido actualizada exitosamente. A partir de ahora, utilice su nueva "
-						+ "contraseña para iniciar sesión en su cuenta",
+				"La contraseña ha sido actualizada exitosamente. A partir de ahora, utilice su nueva contraseña para iniciar sesión en su cuenta.",
 				null);
 	}
 
@@ -118,8 +116,6 @@ public class SeguridadService implements ISeguridadService {
 				
 				for (Usuario iterator : consultaUsuario) {
 					if (iterator.getUsuPassword() != null) {
-						//cambiarContrasena(usuLogin, iterator.getUsuPassword(), claveTemporal, claveTemporal, "1");
-						//seguridadRepository.updateByPerNumDocumForUniquePass(iterator.getUsuLogin(), iterator.getUsuPassword(), claveTemporal, "1");
 						usuarioUpdate=iterator;
 					} else {
 						seguridadRepository.updateByUsuLoginPassNull(iterator.getUsuLogin(), Utilidades.code(claveTemporal), "1");
@@ -132,7 +128,7 @@ public class SeguridadService implements ISeguridadService {
 						seguridadRepository.updateAllPasswords(usuLogin, usuarioUpdate.getUsuPassword(), Utilidades.code(claveTemporal), "1");
 				} catch (Exception e) {
 					return new Response(HttpStatus.BAD_REQUEST.value(),
-							"Fallo el cambio de la contraseña Se ha generado una excepcion, Comucate con el administrador.", e);
+							"Se ha generado una excepción con el cambio de la contraseña Se ha generado una excepción, Comunícate con el administrador para verificar que sucede.", e);
 				}
 				
 				cuerpoCorreo = "<html><body>Estimad@ " + personal.getPernombre1() + " " + personal.getPerapellido1()
@@ -146,12 +142,12 @@ public class SeguridadService implements ISeguridadService {
 
 			} else {
 				return new Response(HttpStatus.NO_CONTENT.value(),
-						"El usuario no tiene correo electrónico asignado para iniciar el proceso de cambio de contraseña.",
+						"El usuario ingresado no tiene correo electrónico asignado para iniciar el proceso de cambio de contraseña. Comunícate con el administrador para verificar la información del usuario.",
 						null);
 			}
 		} else {
 			return new Response(HttpStatus.NO_CONTENT.value(),
-					"El número de documento no se encuentra registrado en el sistema.", null);
+					"El número de documento del usuario no se encuentra registrado en el sistema. Comunícate con el administrador para verificar la información del usuario.", null);
 		}
 		return new Response(HttpStatus.NO_CONTENT.value(),
 				"Informamos que se ha enviado una contraseña temporal de un solo uso a la siguiente"
@@ -212,7 +208,7 @@ public class SeguridadService implements ISeguridadService {
 			mailSender.send(message);
 
 		} catch (Exception e) {
-			throw new IllegalStateException("Error enviando el email: " + e.getMessage());
+			throw new IllegalStateException("Se ha generado una excepción enviando el correo electrónico." + e.getMessage());
 		}
 
 	}

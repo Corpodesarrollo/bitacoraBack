@@ -128,6 +128,7 @@ public class PoliticasProteccionService implements IPoliticasProteccionService {
 			politica.setVersion(uVersion == null ? 1: uVersion + 1);
 			politica.setFecha(LocalDate.now());
 			politica.setTipoPolitica("POLITICA_USO");
+			politica.setHabilitado(1L);
 			politicasProteccionRepository.save(politica);
 			
 			log.info("Respuesta Exitosa al crear politica de uso.");

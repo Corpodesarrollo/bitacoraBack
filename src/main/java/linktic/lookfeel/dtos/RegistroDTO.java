@@ -17,4 +17,5 @@ public class RegistroDTO {
 	private JornadaDTO jornada;
 	private DependenciaDTO dependencia;
 	private LocalidadDTO localidad;
+	private LocalidadDTO municipio;
 }

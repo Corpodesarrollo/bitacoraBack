@@ -2,6 +2,7 @@ package linktic.lookfeel.service;
 
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,7 +53,8 @@ public class MensajeService implements IMensajeService {
 	private static final Logger log = LoggerFactory.getLogger(MensajeService.class);
 
 	DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
-	LocalDate fechaActual = LocalDate.now();
+	ZoneId zonaHorariaColombia = ZoneId.of("America/Bogota");
+	LocalDate fechaActual = LocalDate.now(zonaHorariaColombia);
 	Calendar calendar = Calendar.getInstance();
 
 	@Autowired
@@ -120,9 +122,9 @@ public class MensajeService implements IMensajeService {
 			return new Response(HttpStatus.OK.value(), "Respuesta Exitosa de perfiles.", listaPerfiles);
 
 		} catch (Exception e) {
-			log.error("Se ha generado una excepcion al cargar la lista de perfieles.");
+			log.error("Se ha generado una excepción al cargar la lista de perfiles.");
 			return new Response(HttpStatus.BAD_REQUEST.value(),
-					"Se ha generado una excepcion al cargar la lista de perfieles.", null);
+					"Se ha generado una excepción al cargar la lista de perfiles.", null);
 		}
 
 	}
@@ -144,9 +146,9 @@ public class MensajeService implements IMensajeService {
 			return new Response(HttpStatus.OK.value(), "Respuesta Exitosa lista de localidades.", listaLocalidades);
 
 		} catch (Exception e) {
-			log.error("Se ha generado una excepcion al cargar la lista de localidades.");
+			log.error("Se ha generado una excepción al cargar la lista de localidades.");
 			return new Response(HttpStatus.BAD_REQUEST.value(),
-					"Se ha generado una excepcion al cargar la lista de localidades.", null);
+					"Se ha generado una excepción al cargar la lista de localidades.", null);
 		}
 
 	}
@@ -168,9 +170,9 @@ public class MensajeService implements IMensajeService {
 					listaColegioDto);
 
 		} catch (Exception e) {
-			log.error("Se ha generado una excepcion al cargar la lista de colegios por localidad.");
+			log.error("Se ha generado una excepción al cargar la lista de colegios por localidad.");
 			return new Response(HttpStatus.BAD_REQUEST.value(),
-					"Se ha generado una excepcion al cargar la lista de colegios por localidad.", null);
+					"Se ha generado una excepción al cargar la lista de colegios por localidad.", null);
 		}
 
 	}
@@ -192,9 +194,9 @@ public class MensajeService implements IMensajeService {
 			return new Response(HttpStatus.OK.value(), "Respuesta Exitosa de Sedes por Colegios.", listaSedesDto);
 
 		} catch (Exception e) {
-			log.error("Se ha generado una excepcion al cargar la lista de sedes por colegios.");
+			log.error("Se ha generado una excepción al cargar la lista de sedes por colegios.");
 			return new Response(HttpStatus.BAD_REQUEST.value(),
-					"Se ha generado una excepcion al cargar la lista de sedes por colegios.", null);
+					"Se ha generado una excepción al cargar la lista de sedes por colegios.", null);
 		}
 
 	}
@@ -217,9 +219,9 @@ public class MensajeService implements IMensajeService {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error("Se ha generado una excepcion al cargar la lista de jornadas por sedes y colegios.");
+			log.error("Se ha generado una excepción al cargar la lista de jornadas por sedes y colegios.");
 			return new Response(HttpStatus.BAD_REQUEST.value(),
-					"Se ha generado una excepcion al cargar la lista de jornadas por sedes y colegios.", null);
+					"Se ha generado una excepción al cargar la lista de jornadas por sedes y colegios.", null);
 		}
 
 	}
@@ -298,8 +300,8 @@ public class MensajeService implements IMensajeService {
 				Mensaje mensaje = mensaje(id);
 				if (mensaje != null) {
 					mensajeRepository.delete(mensaje);
-					log.info("Mensaje Borrado Exitosa.");
-					return new Response(HttpStatus.OK.value(), "Mensaje Borrado Exitosa.", null);
+					log.info("Mensaje Borrado Exitosamente.");
+					return new Response(HttpStatus.OK.value(), "Mensaje Borrado Exitosamente.", null);
 				} else {
 					log.error("Id del mensaje no encontrado.");
 					return new Response(HttpStatus.BAD_REQUEST.value(), "Id del mensaje no encontrado.", null);
@@ -438,9 +440,9 @@ public class MensajeService implements IMensajeService {
 
 						}
 					} else {
-						log.error("Error...la fecha de hasta no puede ser menor a la fecha desde.");
+						log.error("Se ha generado un error, la fecha de hasta no puede ser menor a la fecha desde.");
 						return new Response(HttpStatus.BAD_REQUEST.value(),
-								"Error...la fecha de hasta no puede ser menor a la fecha desde.", null);
+								"Se ha generado un error, la fecha de hasta no puede ser menor a la fecha desde.", null);
 					}
 				} else {
 					log.error("Uno de los campos de fecha se encuentra en blanco, No se puede realizar la consulta.");
@@ -543,11 +545,11 @@ public class MensajeService implements IMensajeService {
 		if (validarPermisos(perfilId, enviarMensaje)) {
 			nuevoMensaje = crearMensaje(mensaje, usuarioId, perfilId, id, bandera);
 			if (nuevoMensaje != null) {
-				return new Response(HttpStatus.OK.value(), "Se realizo envió  de mensaje de forma exitosa.",
+				return new Response(HttpStatus.OK.value(), "Se realizo el envio del mensaje de forma exitosa.",
 						nuevoMensaje);
 			} else {
 				return new Response(HttpStatus.BAD_REQUEST.value(),
-						"Error al enviar los datos para la creacion del mensaje.", null);
+						"Se ha generado un error al enviar los datos para la creacion del mensaje.", null);
 			}
 		} else {
 			log.error("Usuario no tiene permisos para enviar mensajes.");
@@ -583,8 +585,8 @@ public class MensajeService implements IMensajeService {
 						int bandera = 1;
 						nuevoMensaje = crearMensaje(mensajeDto, usuarioId, perfilId, id, bandera);
 						if (nuevoMensaje != null) {
-							log.info("Se realizo envió de mensaje de forma exitosa.");
-							return new Response(HttpStatus.OK.value(), "Se realizo envió de mensaje de forma exitosa.",
+							log.info("Se realizo el envio del mensaje de forma exitosa.");
+							return new Response(HttpStatus.OK.value(), "Se realizo el envio de mensaje de forma exitosa.",
 									nuevoMensaje);
 						} else {
 							return new Response(HttpStatus.BAD_REQUEST.value(),
@@ -614,7 +616,7 @@ public class MensajeService implements IMensajeService {
 		try {
 			listadoMensajes = mensajeRepository.listaMensajesHome(perfilId, colegioId, sedeId, jornadaId, localidadId);
 		} catch (Exception e) {
-			log.error("Error... Se ha generado una excepcion al listar los mensajes en el metodo listadoMensajesHome.",
+			log.error("Se ha generado una excepción al listar los mensajes en el metodo listadoMensajesHome.",
 					e);
 			listadoMensajes = null;
 		}
@@ -647,7 +649,7 @@ public class MensajeService implements IMensajeService {
 
 		} catch (Exception e) {
 			log.error(
-					"Error... Se ha generado una excepcion al listar los mensajes en el metodo listadoMensajesBuscar.",
+					"Se ha generado una excepción al listar los mensajes en el metodo listadoMensajesBuscar.",
 					e);
 			listadoMensajes = null;
 		}
@@ -659,7 +661,7 @@ public class MensajeService implements IMensajeService {
 		try {
 			mensaje = mensajeRepository.verMensaje(id);
 		} catch (Exception e) {
-			log.error("Error... Se ha generado una excepcion al listar los mensajes en el metodo Mensajes.",
+			log.error("Se ha generado una excepción al listar los mensajes en el metodo Mensajes.",
 					e.getMessage());
 			mensaje = null;
 		}
@@ -769,7 +771,7 @@ public class MensajeService implements IMensajeService {
 						nombrePerfil = perfilRepository.findPerfilNombre(iterablePerfil);
 					} catch (Exception e) {
 						nombrePerfil = "N/A";
-						log.error("Se generado una excepcion la busqueda del nombre del perfil para el mensaje.",
+						log.error("Se generado una excepción la busqueda del nombre del perfil para el mensaje.",
 								e.getMessage());
 					}
 					if (!listaPersonal.isEmpty()) {
@@ -791,11 +793,11 @@ public class MensajeService implements IMensajeService {
 
 			}
 
-			log.info("Se realizo envió  de mensaje de forma exitosa.");
+			log.info("Se realizo el envio del mensaje de forma exitosa.");
 			return nuevoMensaje;
 
 		} catch (Exception e) {
-			log.error("Se generado una excepcion durante la creacion del mensaje.", e.getMessage());
+			log.error("Se ha generado una excepción durante la creación del mensaje.", e.getMessage());
 			return null;
 		}
 
@@ -846,7 +848,7 @@ public class MensajeService implements IMensajeService {
 			listaCorreosPersonal = personalRepository.findByPersonalPorPerfil(perfil, colegio, localidad, sede,
 					jornada);
 		} catch (Exception e) {
-			log.error("Se generado una excepcion la busqueda de correos electroicos a enviar.", e.getMessage());
+			log.error("Se ha generado una excepción durante la búsqueda de correos electrónicos para enviar el mensaje.", e.getMessage());
 			return null;
 		}
 
@@ -862,7 +864,7 @@ public class MensajeService implements IMensajeService {
 
 			return true;
 		} catch (Exception e) {
-			log.error("Se generado una excepcion durante la vaidacion de fechas.", e.getMessage());
+			log.error("Se ha generado una excepción durante la validación de fechas para los mensajes.", e.getMessage());
 			return false;
 		}
 
@@ -895,7 +897,7 @@ public class MensajeService implements IMensajeService {
 			}
 
 		} catch (Exception e) {
-			log.error("Se generado una excepcion durante la validacion de permisos.", e.getMessage());
+			log.error("Se ha generado una excepción durante la validación de permisos para los mensajes.", e.getMessage());
 			respuesta = false;
 		}
 		return respuesta;
@@ -918,7 +920,7 @@ public class MensajeService implements IMensajeService {
 				nivelPerfil = null;
 			}
 		} catch (Exception e) {
-			log.error("Se generado una excepcion durante la validacion de niveles.", e.getMessage());
+			log.error("Se ha generado una excepción durante la validación de niveles de los permisos de mensajes.", e.getMessage());
 			nivelPerfil = null;
 		}
 
@@ -946,7 +948,7 @@ public class MensajeService implements IMensajeService {
 			helper.setText(mensaje, true);
 			mailSender.send(message);
 		} catch (Exception e) {
-			throw new IllegalStateException("Error enviando el email: " + e.getMessage());
+			throw new IllegalStateException("Se ha generado una excepción enviando el correo electrónico." + e.getMessage());
 		}
 	}
 

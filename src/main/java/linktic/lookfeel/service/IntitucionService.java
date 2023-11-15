@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import linktic.lookfeel.model.Institucion;
+import linktic.lookfeel.repositories.InstitucionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,9 +41,13 @@ public class IntitucionService implements IInstitucionService {
 	
 	@Autowired
 	private GrupoServicioRepository grupoServicioRepository;
-	
+
 	@Autowired
 	private AccesoDirectoRepository accesoDirectoRepository;
+
+	@Autowired
+	private InstitucionRepository institucionRepository;
+
 
 	@Override
 	public ResponseInsitucionDTO getInsitucionesByPersona(String idPersona) {
@@ -54,6 +60,7 @@ public class IntitucionService implements IInstitucionService {
 		List<RegistroDTO> listRegistros = new ArrayList<>();
 		RegistroDTO registro = new RegistroDTO();
 		LocalidadDTO localidadInstitucion;
+		LocalidadDTO municipio = null;
 		FotoDTO fotoDTO;
 		List<Object[]> listData = null;
 		String codNivel = "";
@@ -87,6 +94,7 @@ public class IntitucionService implements IInstitucionService {
 					perfil.setEtiqueta(regData[3].toString());
 					perfil.setNombre(regData[2].toString());
 					perfil.setIdPerfilNivel(Integer.parseInt(regData[13].toString()));
+					perfil.setCodJerarquia(Integer.parseInt(regData[18].toString()));
 					
 					if (regData[4] != null) {
 						// Se genera imagen
@@ -110,6 +118,16 @@ public class IntitucionService implements IInstitucionService {
 							institucion.setNombre(regData[5].toString());
 							institucion.setLocalidad(localidadInstitucion);
 							institucion.setFoto_escudo(fotoDTO);
+							if(institucion.getId()!=null){
+								Institucion inst = this.institucionRepository.findByCodigo(institucion.getId());
+								if (inst != null) {
+									if (inst.getVigencia() != null) institucion.setVigencia(inst.getVigencia());
+									if (inst.getMunicipio() != null) {
+										municipio = new LocalidadDTO();
+										municipio.setId(inst.getMunicipio().intValue());
+									}
+								}
+							}
 						}
 						
 						// Se entrega datos de SEDE
@@ -123,7 +141,7 @@ public class IntitucionService implements IInstitucionService {
 							jornada.setId(Long.parseLong(regData[10].toString()));
 							jornada.setNombre(regData[11].toString());
 						}
-
+						registro.setMunicipio(municipio);
 						registro.setColegio(institucion);
 						registro.setSede(sede);
 						registro.setJornada(jornada);

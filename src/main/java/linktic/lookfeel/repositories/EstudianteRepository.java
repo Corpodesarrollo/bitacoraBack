@@ -41,7 +41,7 @@ public interface EstudianteRepository extends JpaRepository<Estudiante, Long> {
 			+ "		   AND ((:codigoJornada >= 0 AND jer.G_JERJORN = :codigoJornada) OR (:codigoJornada < 0 AND jer.G_JERJORN >= 0)) "
 			+ "		  ORDER BY gru.grunombre ASC, NLSSORT(gra.GRANOMBRE,'NLS_SORT=XSpanish') ASC, NLSSORT(est.estapellido1,'NLS_SORT=XSpanish') ASC,  "
 			+ "		  		   NLSSORT(est.estnombre1,'NLS_SORT=XSpanish') ASC, NLSSORT(consJor.g_connombre,'NLS_SORT=XSpanish') ASC) tbl1) "
-			+ "WHERE num_reg BETWEEN ((:numPagina - 1) * (:numRegPorPagina)) AND ((:numPagina * :numRegPorPagina)-1)")
+			+ "WHERE num_reg BETWEEN (((:numPagina - 1) * :numRegPorPagina) + 1) AND (:numPagina * :numRegPorPagina)")
 	List<Object[]> consultaPaginadaEstudiantesPorInstitucion(int codigoInstitucion, int codigoSede, int codigoJornada, int numPagina, int numRegPorPagina);
 	
 	@Query(nativeQuery = true, value = "SELECT COUNT(*) "
@@ -58,39 +58,28 @@ public interface EstudianteRepository extends JpaRepository<Estudiante, Long> {
 			+ "		   AND ((:codigoJornada >= 0 AND jer.G_JERJORN = :codigoJornada) OR (:codigoJornada < 0 AND jer.G_JERJORN >= 0)) ")
 	List<Object[]> consultaTotalRegEstudiantesPorInstitucion(int codigoInstitucion, int codigoSede, int codigoJornada);
 	
-	@Query(nativeQuery = true, value = "SELECT COUNT(*) "
-			+ "										FROM (SELECT  inst.INSCODIGO, count(*) AS estudiantes  "
-			+ "												FROM estudiante est   "
-			+ "												INNER JOIN g_jerarquia jer on jer.G_JerCodigo = EstGrupo  "
-			+ "												INNER JOIN g_constante cons on cons.G_conCodigo = ESTTIPODOC and  G_CONTIPO='10'  "
-			+ "												INNER JOIN institucion inst on G_JerInst = inst.INSCODIGO  "
-			+ "												INNER JOIN grupo gru on gru.GRUJERGRUPO = jer.G_JerCodigo   "
-			+ "												INNER JOIN grado gra on gra.GRACODIGO = jer.G_JerGrado AND gra.GRACODINST=inst.INSCODIGO  "
-			+ "												LEFT JOIN G_CONSTANTE gcons ON gcons.G_CONTIPO = 5 AND gcons.G_CONCODIGO = jer.G_JERJORN  "
-			+ "												WHERE G_JerTipo=1 and G_JerNivel=8  "
-			+ "												GROUP BY inst.INSCODIGO) q  "
-			+ "										INNER JOIN institucion inst on inst.INSCODIGO = q.INSCODIGO  "
-			+ "										INNER JOIN egd_localidad ln ON ln.lc_codi_id=inst.INSCODLOCAL "
-			+ "										WHERE ((:codigoLocalidad > 0 AND lc_codi_id = :codigoLocalidad) OR (:codigoLocalidad <= 0 AND lc_codi_id > 0)) ")
-	List<Object[]> consultaTotalRegTotalEstudiantesPorInstituto(int codigoLocalidad);
+	@Query(nativeQuery = true, value = " SELECT count(*)  "
+			+ "			  FROM (SELECT i.INSNOMBRE, jer.G_JERINST, count(e.ESTGRUPO) AS total_estu  "
+			+ "			   FROM g_jerarquia jer, INSTITUCION i, ESTUDIANTE e "
+			+ "			 WHERE jer.G_JERCODIGO = e.ESTGRUPO "
+			+ "			   AND jer.G_JERINST = i.INSCODIGO   "
+			+ "			   AND G_JerTipo=1 and G_JerNivel=8  "
+			+ "			   AND ((:codigoLocalidad > 0 AND i.INSCODLOCAL = :codigoLocalidad) OR (:codigoLocalidad <= 0 AND i.INSCODLOCAL > 0))   "
+			+ "			  GROUP BY i.INSNOMBRE, jer.G_JERINST  "
+			+ "			  ORDER BY i.INSNOMBRE) ")
+	List<Object[]> consultaTotalRegNumEstudiantesPorInstituto(int codigoLocalidad);
 	
-	@Query(nativeQuery = true, value = "SELECT id_localidad, localidad, institucion, estudiantes  "
-			+ " FROM ( SELECT ROWNUM AS num_reg, id_localidad, localidad, institucion, estudiantes  "
-			+ "			         FROM (SELECT lc_codi_id AS id_localidad, lc_nomb AS localidad, inst.insnombre AS institucion, q.estudiantes  "
-			+ "							FROM (SELECT  inst.INSCODIGO, count(*) AS estudiantes  "
-			+ "									FROM estudiante est   "
-			+ "									INNER JOIN g_jerarquia jer on jer.G_JerCodigo = EstGrupo  "
-			+ "									INNER JOIN g_constante cons on cons.G_conCodigo = ESTTIPODOC and  G_CONTIPO='10'  "
-			+ "									INNER JOIN institucion inst on G_JerInst = inst.INSCODIGO  "
-			+ "									INNER JOIN grupo gru on gru.GRUJERGRUPO = jer.G_JerCodigo   "
-			+ "									INNER JOIN grado gra on gra.GRACODIGO = jer.G_JerGrado AND gra.GRACODINST=inst.INSCODIGO  "
-			+ "									LEFT JOIN G_CONSTANTE gcons ON gcons.G_CONTIPO = 5 AND gcons.G_CONCODIGO = jer.G_JERJORN  "
-			+ "									WHERE G_JerTipo=1 and G_JerNivel=8  "
-			+ "									GROUP BY inst.INSCODIGO) q  "
-			+ "							INNER JOIN institucion inst on inst.INSCODIGO = q.INSCODIGO  "
-			+ "							INNER JOIN egd_localidad ln ON ln.lc_codi_id=inst.INSCODLOCAL "
-			+ "							WHERE ((:codigoLocalidad > 0 AND lc_codi_id = :codigoLocalidad) OR (:codigoLocalidad <= 0 AND lc_codi_id > 0)) "
-			+ "							ORDER BY lc_nomb ASC, inst.insnombre)) "
-			+ "WHERE num_reg BETWEEN ((:numPagina - 1) * (:numRegPorPagina + 1)) AND (:numPagina * :numRegPorPagina)")
-	List<Object[]> consultaPaginadaTotalEstudiantesPorInstituto(int codigoLocalidad, int numPagina, int numRegPorPagina);
+	@Query(nativeQuery = true, value = "SELECT id_localidad, localidad, institucion, estudiantes   "
+			+ "			   FROM (SELECT ROWNUM AS num_reg, tbl1.* "
+			+ "					   FROM (SELECT l.lc_codi_id AS id_localidad, l.lc_nomb AS localidad, i.INSNOMBRE AS institucion, count(e.ESTGRUPO) AS estudiantes "
+			+ "							   FROM g_jerarquia jer, INSTITUCION i, ESTUDIANTE e, egd_localidad l  "
+			+ "							  WHERE G_JerTipo=1 and G_JerNivel=8 "
+			+ "							    AND jer.G_JERCODIGO = e.ESTGRUPO  "
+			+ "							    AND jer.G_JERINST = i.INSCODIGO "
+			+ "							    AND i.INSCODLOCAL = l.LC_CODI_ID "
+			+ "						        AND ((:codigoLocalidad > 0 AND i.INSCODLOCAL = :codigoLocalidad) OR (:codigoLocalidad <= 0 AND i.INSCODLOCAL > 0))  "
+			+ "						      GROUP BY i.INSNOMBRE, jer.G_JERINST, l.lc_codi_id, l.lc_nomb "
+			+ "						      ORDER BY i.INSNOMBRE) tbl1) "
+			+ "			  WHERE num_reg BETWEEN (((:numPagina - 1) * :numRegPorPagina) + 1) AND (:numPagina * :numRegPorPagina)")
+	List<Object[]> consultaPaginadaNumEstudiantesPorInstituto(int codigoLocalidad, int numPagina, int numRegPorPagina);
 }
