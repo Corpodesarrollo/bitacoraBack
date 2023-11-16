@@ -1,10 +1,12 @@
 package linktic.lookfeel.service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +85,8 @@ public class BitacoraService implements IBitacoraService{
 		Bitacora b = new Bitacora();
 		b.setUsuario(bitacora.getUsuario().toString());
 		b.setModulo(bitacora.getModulo());
-		b.setFechaRegistro(ZonedDateTime.now(ZoneId.of("America/Bogota")));
+		Date hoy = new Date();
+		b.setFechaRegistro(hoy);
 		b.setTipoLog(bitacora.getTipoLog());
 		b.setDescripcion(bitacora.getDescripcion());
 		b.setSubmodulo(bitacora.getSubmodulo());
@@ -193,7 +196,12 @@ public class BitacoraService implements IBitacoraService{
 		Pageable page = PageRequest.of(bitacora.getPaginaActual(), bitacora.getItemsPagina());
 		String descripcion = "%"+bitacora.getDescripcion()+"%";
 		List<Bitacora> bitacoras = bitacoraRepository.consultaBitacora(bitacora.getFechaInicio(), bitacora.getFechaFin(), bitacora.getUsuario(), bitacora.getColegio(), bitacora.getSede(), bitacora.getJornada(),
-				bitacora.getTipoLogBitacora(), descripcion,page);
+				bitacora.getTipoLogBitacora(), descripcion, page);
+		Integer total = bitacoraRepository.totalResgistrosFiltro(bitacora.getFechaInicio(), bitacora.getFechaFin(), bitacora.getUsuario(), bitacora.getColegio(), bitacora.getSede(), bitacora.getJornada(),
+				bitacora.getTipoLogBitacora(), descripcion);
+		for (Bitacora bitacora2 : bitacoras) {
+			bitacora2.setTotalPag(total);
+		}
 		
 		return new Response(HttpStatus.OK.value(), "Bitacora consultada correctamente", bitacoras);
 	}

@@ -1,7 +1,6 @@
 package linktic.lookfeel.model;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,7 +20,7 @@ public class Bitacora {
 	    private Long id;
 		
 		@Column(name="FECHA_REGISTRO")
-	    private ZonedDateTime fechaRegistro;
+	    private Date fechaRegistro;
 		
 		@Column(name="USUARIO")
 	    private String usuario;
@@ -61,11 +60,11 @@ public class Bitacora {
 			this.id = id;
 		}
 
-		public ZonedDateTime getFechaRegistro() {
+		public Date getFechaRegistro() {
 			return fechaRegistro;
 		}
 
-		public void setFechaRegistro(ZonedDateTime fechaRegistro) {
+		public void setFechaRegistro(Date fechaRegistro) {
 			this.fechaRegistro = fechaRegistro;
 		}
 
