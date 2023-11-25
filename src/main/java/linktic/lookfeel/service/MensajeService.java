@@ -243,8 +243,8 @@ public class MensajeService implements IMensajeService {
 				return new Response(HttpStatus.OK.value(), "Respuesta Exitosa.", verMensajeContenidoDTO);
 
 			} else {
-				log.error("No se encontro mensajes.");
-				return new Response(HttpStatus.BAD_REQUEST.value(), "No se encontro mensajes.", null);
+				log.error("No se encontraron mensajes.");
+				return new Response(HttpStatus.BAD_REQUEST.value(), "No se encontraron mensajes.", null);
 			}
 
 		} else {
@@ -281,8 +281,8 @@ public class MensajeService implements IMensajeService {
 				return new Response(HttpStatus.OK.value(), "Respuesta Exitosa.", verMensajeContenidoDTO);
 
 			} else {
-				log.error("No se encontro mensajes.");
-				return new Response(HttpStatus.BAD_REQUEST.value(), "No se encontro mensajes.", null);
+				log.error("No se encontraron mensajes.");
+				return new Response(HttpStatus.BAD_REQUEST.value(), "No se encontraron mensajes.", null);
 			}
 
 		} else {
@@ -545,11 +545,11 @@ public class MensajeService implements IMensajeService {
 		if (validarPermisos(perfilId, enviarMensaje)) {
 			nuevoMensaje = crearMensaje(mensaje, usuarioId, perfilId, id, bandera);
 			if (nuevoMensaje != null) {
-				return new Response(HttpStatus.OK.value(), "Se realizo el envio del mensaje de forma exitosa.",
+				return new Response(HttpStatus.OK.value(), "Se realizó el envio del mensaje de forma exitosa.",
 						nuevoMensaje);
 			} else {
 				return new Response(HttpStatus.BAD_REQUEST.value(),
-						"Se ha generado un error al enviar los datos para la creacion del mensaje.", null);
+						"Se ha generado un error al enviar los datos para la creación del mensaje, por favor verifica que todos los datos sean correctos de ser así y el error persiste, comunícate con el administrador del sistema.", null);
 			}
 		} else {
 			log.error("Usuario no tiene permisos para enviar mensajes.");
@@ -585,12 +585,12 @@ public class MensajeService implements IMensajeService {
 						int bandera = 1;
 						nuevoMensaje = crearMensaje(mensajeDto, usuarioId, perfilId, id, bandera);
 						if (nuevoMensaje != null) {
-							log.info("Se realizo el envio del mensaje de forma exitosa.");
-							return new Response(HttpStatus.OK.value(), "Se realizo el envio de mensaje de forma exitosa.",
+							log.info("Se realizó el envio del mensaje de forma exitosa.");
+							return new Response(HttpStatus.OK.value(), "Se realizó el envio del mensaje de forma exitosa.",
 									nuevoMensaje);
 						} else {
 							return new Response(HttpStatus.BAD_REQUEST.value(),
-									"Error al enviar los datos para la actualizacion del mensaje.", null);
+									"Error al enviar los datos para la actualización del mensaje.", null);
 						}
 					}
 				} else {
@@ -742,8 +742,6 @@ public class MensajeService implements IMensajeService {
 
 				nuevoMensaje.setMsjCodigo(id);
 				estado = (long) 0;
-				nuevoMensaje.setMsjFecha(mensaje.getFecha());
-				nuevoMensaje.setMsjFecha(oldmensaje.getMsjFecha());
 
 				nuevoMensaje.setMsjEnviadoPor(oldmensaje.getMsjEnviadoPor());
 			}
@@ -793,7 +791,7 @@ public class MensajeService implements IMensajeService {
 
 			}
 
-			log.info("Se realizo el envio del mensaje de forma exitosa.");
+			log.info("Se realizó el envio del mensaje de forma exitosa.");
 			return nuevoMensaje;
 
 		} catch (Exception e) {

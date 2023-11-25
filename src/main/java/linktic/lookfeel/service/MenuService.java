@@ -2,6 +2,7 @@ package linktic.lookfeel.service;
 
 import linktic.lookfeel.dtos.MenuDto;
 import linktic.lookfeel.dtos.MenuListsDto;
+import linktic.lookfeel.dtos.ServicioParamDTO;
 import linktic.lookfeel.repositories.MenuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService implements IMenuService {
@@ -43,6 +45,15 @@ public class MenuService implements IMenuService {
         return listMenu;
     }
 
+    @Override
+    public List<ServicioParamDTO> getParamServices(Long codigo, String recurso) {
+        
+        List<Object[]> res = repository.getServiciosParamPorCodigoRecurso(codigo, recurso);
+        
+        return res.stream()
+                    .map(object ->ServicioParamDTO.objectoToDTO(object))
+                    .collect(Collectors.toList());
+    }
 
     private MenuDto toDtoMenuCatalog(Object[] obj) {
 

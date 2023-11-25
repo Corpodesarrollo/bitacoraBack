@@ -52,5 +52,8 @@ public interface MenuRepository extends JpaRepository<Categoria, Long> {
             "where (:perfil = 0 OR servicio_perfil.SerPerfPerfCodigo=:perfil)))")
     List<Object[]> getListCategoryPrivateParam(String perfil);
 
-
+    @Query(nativeQuery = true, value = " SELECT sp.PARNOMBRE,sp.PARVALOR FROM servicio_param sp "
+    		+ "JOIN servicio s ON sp.PARSERCODIGO = s.SERCODIGO "
+    		+ "WHERE s.SERCODIGO =:codigo OR s.SERRECURSO =:recurso")
+    List<Object[]> getServiciosParamPorCodigoRecurso(Long codigo, String recurso);
 }

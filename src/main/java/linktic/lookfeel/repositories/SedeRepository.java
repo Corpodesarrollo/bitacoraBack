@@ -19,7 +19,8 @@ public interface SedeRepository extends JpaRepository<Sede,Long>{
 	 * @return List<Sede>
 	 */
 	@Query(nativeQuery = true, value = "select * from sede\r\n"
-			+ "where sedcodins=:idInstitucion")
+			+ "where sedcodins=:idInstitucion\r\n"
+			+ "and sedestado='A'")
 	List<Sede> findSedeByInstitucion (Long idInstitucion);
 	
 	

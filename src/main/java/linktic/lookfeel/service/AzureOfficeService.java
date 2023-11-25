@@ -3,6 +3,7 @@ package linktic.lookfeel.service;
 import java.io.IOException;
 
 import linktic.lookfeel.security.services.ISecurityService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -108,12 +109,16 @@ public class AzureOfficeService implements IAzureOfficeService {
 
 			try {
 				foto.setNombreArchivo(perfilRepository.findNumDocumentoByEmail(personal.getPernumdocum()) == null ? personal.getPernumdocum()+".jpg" : perfilRepository.findNumDocumentoByEmail(personal.getPernumdocum()));
-				foto.setCodificacion(imageToBase64Converter.convertImageToBase64("imagenes/"+personal.getPernumdocum()+".jpg"));
+				FotoDTO fotoDTO = fotoService.getFotoPersona(personal.getPernumdocum());
+				if (fotoDTO!= null){
+					foto.setNombreArchivo(fotoDTO.getNombreArchivo());
+					foto.setCodificacion(fotoDTO.getCodificacion());
+				}
 				usuario.setFoto(foto);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			} catch (Exception e) {
+				System.out.println("Error cargando foto {} "+ e.getMessage());
 				e.printStackTrace();
-			} //perfilRepository.findNumDocumentoByEmail(personal.getPernumdocum()))
+			}
 
 			response.setExito(true);
 			response.setUsuario(usuario);
@@ -293,13 +298,16 @@ public class AzureOfficeService implements IAzureOfficeService {
 
 					try {
 						foto.setNombreArchivo(perfilRepository.findNumDocumentoByEmail(personal.getPernumdocum()) == null ? personal.getPernumdocum()+".jpg" : perfilRepository.findNumDocumentoByEmail(personal.getPernumdocum()));
-						foto.setCodificacion(imageToBase64Converter.convertImageToBase64("imagenes/"+personal.getPernumdocum()+".jpg"));
+						FotoDTO fotoDTO = fotoService.getFotoPersona(personal.getPernumdocum());
+						if (fotoDTO!= null){
+							foto.setCodificacion(fotoDTO.getCodificacion());
+							foto.setNombreArchivo(fotoDTO.getNombreArchivo());
+						}
 						usuario.setFoto(foto);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
+					} catch (Exception e) {
+						System.out.println("Error cargando foto {} "+ e.getMessage());
 						e.printStackTrace();
-					} //perfilRepository.findNumDocumentoByEmail(personal.getPernumdocum()))
-
+					}
 
 					response.setExito(true);
 					response.setUsuario(usuario);
@@ -337,12 +345,16 @@ public class AzureOfficeService implements IAzureOfficeService {
 
 					try {
 						foto.setNombreArchivo(perfilRepository.findNumDocumentoByEmail(personal.getPernumdocum()) == null ? personal.getPernumdocum()+".jpg" : perfilRepository.findNumDocumentoByEmail(personal.getPernumdocum()));
-						foto.setCodificacion(imageToBase64Converter.convertImageToBase64("imagenes/"+personal.getPernumdocum()+".jpg"));
+						FotoDTO fotoDTO = fotoService.getFotoPersona(personal.getPernumdocum());
+						if (fotoDTO!= null){
+							foto.setCodificacion(fotoDTO.getCodificacion());
+							foto.setNombreArchivo(fotoDTO.getNombreArchivo());
+						}
 						usuario.setFoto(foto);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
+					} catch (Exception e) {
+						System.out.println("Error cargando foto {} "+ e.getMessage());
 						e.printStackTrace();
-					} //perfilRepository.findNumDocumentoByEmail(personal.getPernumdocum()))
+					}
 
 
 					response.setExito(true);

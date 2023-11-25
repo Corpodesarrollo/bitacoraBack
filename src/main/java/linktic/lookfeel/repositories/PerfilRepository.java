@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import linktic.lookfeel.model.Perfil;
 import linktic.lookfeel.model.Personal;
+import org.springframework.data.repository.query.Param;
 
 public interface PerfilRepository extends JpaRepository<Perfil, Long>{
 	
@@ -83,7 +84,11 @@ public interface PerfilRepository extends JpaRepository<Perfil, Long>{
 			+ "			 WHERE pernumdocum = :numIdentificacion AND u.usuestado = 1 "
 			+ "			 ORDER BY pr.perfnombre ASC, i.insnombre ASC, s.sednombre ASC, gcons.g_connombre ASC")
 	List<Object[]> findRectorPerfilByNumDocumento(String numIdentificacion);
-	
+
+
+	@Query(nativeQuery = true, value = "select inscoddane12 from institucion where inscodigo =:codInstitucion")
+	public Long getByCodInstitucion(@Param("codInstitucion") Long codInstitucion);
+
 	/**
 	 * 
 	 * Perfil de la persona por el correo dado

@@ -40,6 +40,14 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         PATH_PERMIT_NO_AUTH = new ArrayList<>();
         PATH_PERMIT_NO_AUTH.add("/api/apoyo/seguridad/login");
         PATH_PERMIT_NO_AUTH.add("/apoyo-api/api/apoyo/seguridad/login");
+        PATH_PERMIT_NO_AUTH.add("cambiarContrasenia");
+        PATH_PERMIT_NO_AUTH.add("recuperarContrasenia");
+        PATH_PERMIT_NO_AUTH.add("seguridad/");
+        PATH_PERMIT_NO_AUTH.add("consultarUsuarioPorUsuLogin");
+        PATH_PERMIT_NO_AUTH.add("getParamServicios");
+        PATH_PERMIT_NO_AUTH.add("listaDocumentosIdentidad");
+        PATH_PERMIT_NO_AUTH.add("consultas/estudiante");
+        PATH_PERMIT_NO_AUTH.add("apoyo/seguridad");
     }
 
     /* (non-Javadoc)
@@ -57,15 +65,17 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 }
             } else {
                 if (request != null && request.getRequestURI() != null) {
-                    if (!PATH_PERMIT_NO_AUTH.contains(request.getRequestURI())) {
+                    boolean haveAccess = Boolean.FALSE;
+                    for (String item : PATH_PERMIT_NO_AUTH) {
+                        if (request.getRequestURI().contains(item)) {
+                            haveAccess = Boolean.TRUE;
+                        }
+                    }
+                    if (!haveAccess) {
                         SecurityContextHolder.clearContext();
                         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                         ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "No tiene permiso");
                     }
-                } else {
-                    SecurityContextHolder.clearContext();
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, "No tiene permiso");
                 }
             }
             chain.doFilter(request, response);

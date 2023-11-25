@@ -72,12 +72,12 @@ public class SeguridadService implements ISeguridadService {
 					if (contrasenaNueva.equals(confirmacionContraseña)) {
 						usuarioUpdate = iterator;
 					} else {
-						return new Response(HttpStatus.NO_CONTENT.value(),
+						return new Response(HttpStatus.BAD_REQUEST.value(),
 								"La contraseña nueva no coincide con su confirmación de contraseña. Verifica la información ingresada.", null);
 					}
 
 				} else {
-					return new Response(HttpStatus.NO_CONTENT.value(), "La contraseña actual es invalidad.", null);
+					return new Response(HttpStatus.BAD_REQUEST.value(), "La contraseña actual es invalida.", null);
 				}
 
 			}
@@ -91,10 +91,10 @@ public class SeguridadService implements ISeguridadService {
 			
 
 		} else {
-			return new Response(HttpStatus.NO_CONTENT.value(),
+			return new Response(HttpStatus.BAD_REQUEST.value(),
 					"Se ha generado una falla con el cambio de la contraseña, porque el usuario no existe en el sistema.", null);
 		}
-		return new Response(HttpStatus.NO_CONTENT.value(),
+		return new Response(HttpStatus.OK.value(),
 				"La contraseña ha sido actualizada exitosamente. A partir de ahora, utilice su nueva contraseña para iniciar sesión en su cuenta.",
 				null);
 	}
@@ -141,19 +141,19 @@ public class SeguridadService implements ISeguridadService {
 				enviarCorreoElectronico(from, personal.getPeremail(), "Envio Contraseña Temporal", cuerpoCorreo);
 
 			} else {
-				return new Response(HttpStatus.NO_CONTENT.value(),
+				return new Response(HttpStatus.BAD_REQUEST.value(),
 						"El usuario ingresado no tiene correo electrónico asignado para iniciar el proceso de cambio de contraseña. Comunícate con el administrador para verificar la información del usuario.",
 						null);
 			}
 		} else {
-			return new Response(HttpStatus.NO_CONTENT.value(),
+			return new Response(HttpStatus.BAD_REQUEST.value(),
 					"El número de documento del usuario no se encuentra registrado en el sistema. Comunícate con el administrador para verificar la información del usuario.", null);
 		}
-		return new Response(HttpStatus.NO_CONTENT.value(),
+		return new Response(HttpStatus.OK.value(),
 				"Informamos que se ha enviado una contraseña temporal de un solo uso a la siguiente"
 						+ " dirección de correo electrónico: " + personal.getPeremail() + " asegúrese de"
 						+ " revisar la bandeja de entrada."
-						+ " Recuerde que esta contraseña es temporal y solo será valida por un solo uso. Se"
+						+ " Recuerde que esta contraseña es temporal y solo será válida por un solo uso. Se"
 						+ " recomienda iniciar sesión con esta contraseña lo antes posible para"
 						+ " garantizar la seguridad de su cuenta.",
 				null);

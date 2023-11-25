@@ -32,7 +32,7 @@ public class Mensaje{
 	@Column(name="MSJFECHAFIN")
 	private LocalDate msjFechaFin;
 	
-	@Column(name="MSJCONTENIDO", length=3000)
+	@Column(name="MSJCONTENIDO")
 	private String msjContenido;
 	
 	@Column(name="MSJENVIADOPOR", length=1)

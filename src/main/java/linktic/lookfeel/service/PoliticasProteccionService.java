@@ -3,6 +3,8 @@ package linktic.lookfeel.service;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -126,7 +128,8 @@ public class PoliticasProteccionService implements IPoliticasProteccionService {
 			Long uVersion = politicasProteccionRepository.ultimaVersion();
 			politica.setContenido(datosPolitica.getContenido());
 			politica.setVersion(uVersion == null ? 1: uVersion + 1);
-			politica.setFecha(LocalDate.now());
+			ZoneId zonaHorariaColombia = ZoneId.of("America/Bogota");
+			politica.setFecha(LocalDate.now(zonaHorariaColombia));
 			politica.setTipoPolitica("POLITICA_USO");
 			politica.setHabilitado(1L);
 			politicasProteccionRepository.save(politica);
@@ -179,7 +182,9 @@ public class PoliticasProteccionService implements IPoliticasProteccionService {
 			aceptacion.setIdPolitica(datosAceptacion.getIdPolitica());
 			aceptacion.setAceptada(datosAceptacion.aceptada? 1L : 0L);
 			aceptacion.setReenviar(0L);
-			aceptacion.setFechaAceptacion(LocalDateTime.now());
+			DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm:ss");
+			ZoneId zonaHorariaColombia = ZoneId.of("America/Bogota");
+			aceptacion.setFechaAceptacion(LocalDateTime.now(zonaHorariaColombia));
 			
 			aceptacionPoliticasRepository.save(aceptacion);
 			log.info("Respuesta Exitosa al registrar aceptación de  politica de uso.");

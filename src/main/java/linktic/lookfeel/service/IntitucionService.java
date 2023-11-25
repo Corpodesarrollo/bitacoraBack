@@ -38,7 +38,7 @@ public class IntitucionService implements IInstitucionService {
 
 	@Autowired
 	private ImageToBase64Converter imageToBase64Converter;
-	
+
 	@Autowired
 	private GrupoServicioRepository grupoServicioRepository;
 
@@ -47,6 +47,9 @@ public class IntitucionService implements IInstitucionService {
 
 	@Autowired
 	private InstitucionRepository institucionRepository;
+
+	@Autowired
+	private IFotoService fotoService;
 
 
 	@Override
@@ -95,17 +98,17 @@ public class IntitucionService implements IInstitucionService {
 					perfil.setNombre(regData[2].toString());
 					perfil.setIdPerfilNivel(Integer.parseInt(regData[13].toString()));
 					perfil.setCodJerarquia(Integer.parseInt(regData[18].toString()));
-					
+
+
 					if (regData[4] != null) {
-						// Se genera imagen
 						try {
-							fotoDTO.setNombreArchivo(regData[4].toString() + ".jpg");
-							fotoDTO.setCodificacion(imageToBase64Converter
-									.convertImageToBase64("imagenes/" + (regData[4].toString() + ".jpg")));
-						} catch (IOException e) {
+							Long codigoDane = this.perfilRepository.getByCodInstitucion(Long.parseLong(String.valueOf(regData[4])));
+							System.out.println("1. Se tiene regData para trabajar colegio de imagen codigo dane12 : " + codigoDane );
+							if (codigoDane != null) fotoDTO = fotoService.getEscudo(codigoDane.toString());
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
-						
+
 						// Se cargan datos de la LOCALIDAD DE LA INSTITUCION
 						if (regData[6] != null) {
 							localidadInstitucion.setId(Integer.parseInt(regData[6].toString()));
