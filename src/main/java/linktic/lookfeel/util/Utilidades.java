@@ -2,6 +2,7 @@ package linktic.lookfeel.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -18,6 +19,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.util.ResourceUtils;
 
+import linktic.lookfeel.service.BitacoraService;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporter;
@@ -142,23 +144,22 @@ public class Utilidades {
 	       return storedToken != null && storedToken.equals(token);
 	    }
 
-	 private static JasperPrint getReport(List list, String templateName, Map<String, Object> ... params) throws FileNotFoundException, JRException {
+	 private static JasperPrint getReport(List list, InputStream templateName, Map<String, Object> ... params) throws FileNotFoundException, JRException {
 		 Map<String, Object> parameters = new HashMap<>();
 		 if(params.length > 0) {
 			 parameters = params[0];
 		 }
-		 JasperPrint report = JasperFillManager.fillReport(JasperCompileManager.compileReport(
-				 			  ResourceUtils.getFile("classpath:"+templateName+".jrxml").getAbsolutePath()), 
+		 JasperPrint report = JasperFillManager.fillReport(templateName, 
 				 parameters, new JRBeanCollectionDataSource(list,false));
 		 return report;
 	 }
 	 
-	 public static byte[] exportReportToPdf(List list, String templateName, Map<String, Object> ... params) throws FileNotFoundException, JRException  {
+	 public static byte[] exportReportToPdf(List list, InputStream templateName, Map<String, Object> ... params) throws FileNotFoundException, JRException  {
 		 JasperPrint report = Utilidades.getReport(list, templateName, params);
 		 return JasperExportManager.exportReportToPdf(report);
 	 }
 	 
-	 public static byte[] exportReportToXlsx(List list, String templateName, Map<String, Object> ... params) throws FileNotFoundException, JRException  {
+	 public static byte[] exportReportToXlsx(List list, InputStream templateName, Map<String, Object> ... params) throws FileNotFoundException, JRException  {
 		 JasperPrint report = Utilidades.getReport(list, templateName, params);
 		 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		 Exporter exporter = new JRXlsExporter();

@@ -1,6 +1,7 @@
 package linktic.lookfeel.service;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -10,13 +11,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -46,6 +51,12 @@ import linktic.lookfeel.security.repositories.UsuarioRepository;
 import linktic.lookfeel.util.Utilidades;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import javax.imageio.ImageIO;
 import java.util.HashMap;
 
@@ -210,16 +221,23 @@ public class BitacoraService implements IBitacoraService{
 	public Response exportarBitacoraAPdf(long id) {
 		// TODO Auto-generated method stub
 		try {
+			InputStream plantillaBitacoraPdf = getClass().getResourceAsStream("/plantillas/plantillaBitacoraPdf.jasper");
 			BufferedImage logo = ImageIO.read(getClass().getResource("/imagenes/LOGOSED2.png"));
 			List<BitacoraReporte> bitacoras = bitacoraReporteRepository.consultaBitacoraReporte(id);
 			for (BitacoraReporte item : bitacoras) {
 				if(item.getDescripcion()!=null)
 					item.setDescripcion(this.descripcionDecode(item.getDescripcion()));
 			}
-			byte[] respuesta = Utilidades.exportReportToPdf(bitacoras, "plantillaBitacoraPdf", new HashMap<String, Object>() {{ put("logo", logo); }});
+			byte[] respuesta = Utilidades.exportReportToPdf(bitacoras, plantillaBitacoraPdf, new HashMap<String, Object>() {{ put("logo", logo); }});
 			return new Response(HttpStatus.OK.value(), "Reporte generado correctamente", respuesta);
+			
+//			InputStream i = getClass().getResourceAsStream("/plantillas/plantillaBitacoraPdf.jrxml");
+//			return new Response(HttpStatus.OK.value(), "Reporte generado correctamente", IOUtils.toByteArray(i));
 		} catch (Exception e) {
-			return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), sw.toString(), null);
 		}
 	}
 	
@@ -227,9 +245,14 @@ public class BitacoraService implements IBitacoraService{
 	public Response exportarBitacoraAExcel(long id) {
 		// TODO Auto-generated method stub
 		try {
+			InputStream plantillaBitacoraPdf = getClass().getResourceAsStream("/plantillas/plantillaBitacoraPdf.jasper");
 			BufferedImage logo = ImageIO.read(getClass().getResource("/imagenes/LOGOSED2.png"));
 			List<BitacoraReporte> bitacoras = bitacoraReporteRepository.consultaBitacoraReporte(id);
-			byte[] respuesta = Utilidades.exportReportToXlsx(bitacoras, "plantillaBitacoraPdf", new HashMap<String, Object>() {{ put("logo", logo); }});
+			for (BitacoraReporte item : bitacoras) {
+				if(item.getDescripcion()!=null)
+					item.setDescripcion(this.descripcionDecode(item.getDescripcion()));
+			}
+			byte[] respuesta = Utilidades.exportReportToXlsx(bitacoras, plantillaBitacoraPdf, new HashMap<String, Object>() {{ put("logo", logo); }});
 			return new Response(HttpStatus.OK.value(), "Reporte generado correctamente", respuesta);
 		} catch (Exception e) {
 			return new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage(), null);
@@ -238,12 +261,22 @@ public class BitacoraService implements IBitacoraService{
 
 	private String descripcionDecode(String descripcion) throws JsonMappingException, JsonProcessingException {
 		StringBuilder result = new StringBuilder();
-		Map<Object,Object> map = new ObjectMapper().readValue(descripcion, HashMap.class);
-		for (Object key : map.keySet()) {
-			result.append(key + ": " + map.get(key) + "\n");
-	    }
+		if(descripcion.charAt(0)=='{') {
+			Map<Object,Object> map = new ObjectMapper().readValue(descripcion, HashMap.class);
+			for (Object key : map.keySet()) {
+				result.append(key.toString() + ": " + map.get(key) + "\n");
+		    }
+		} else if(descripcion.charAt(0)=='[') {
+			List<Map<Object, Object>> list = new ObjectMapper().readValue(descripcion, new TypeReference<List<Map<Object,Object>>>(){});
+			for (Map<Object, Object> map : list) {
+				for (Object key : map.keySet()) {
+					result.append(key.toString() + ": " + map.get(key) + "\n");
+				}
+				result.append("\n");
+			}
+			
+		}
 		return result.toString();
-//		return descripcion;
 	}
 	
 	
