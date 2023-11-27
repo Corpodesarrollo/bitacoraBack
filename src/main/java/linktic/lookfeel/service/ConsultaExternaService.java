@@ -147,8 +147,7 @@ public class ConsultaExternaService implements IConsultaExternaService {
 		Constante metodologia = new Constante();
 		Grado grado = new Grado();
 		Grupo grupo = new Grupo();
-		Periodos periodo = new Periodos();
-		
+				
 		DatosEstudianteDTO datosEstudianteDTO = new DatosEstudianteDTO();
 		Constante tipoDocumentoEst = new Constante();
 		TipoDocumentoDTO tipoDocumentoDTO = new TipoDocumentoDTO();
@@ -220,9 +219,8 @@ public class ConsultaExternaService implements IConsultaExternaService {
 								datosEstudianteDTO.setGrupo(grupoDTO);
 								
 							}
-							
-							periodo = consultaPeriodos(institucion.getCodigo(), institucion.getVigencia());
-							datosEstudianteDTO.setPeriodos(generarLista(periodo));
+													
+							datosEstudianteDTO.setPeriodos(consultaPeriodos(institucion.getCodigo()));
 							
 							return new Response(HttpStatus.OK.value(), "Respuesta Exitosa.", datosEstudianteDTO);
 						}else {
@@ -351,10 +349,10 @@ public class ConsultaExternaService implements IConsultaExternaService {
 	}
 	
 		
-	private Periodos consultaPeriodos(long idInstitucion, long idVigencia) {
-		Periodos respuesta = new Periodos();
+	private List<Periodos> consultaPeriodos(long idInstitucion) {
+		List<Periodos> respuesta = new ArrayList<>();
 		try {
-			respuesta = periodosRepository.listaPeriodos(idInstitucion, idVigencia);
+			respuesta = periodosRepository.listaPeriodosInstitucion(idInstitucion);
 		} catch (Exception e) {
 			respuesta = null;
 		}
@@ -372,41 +370,7 @@ public class ConsultaExternaService implements IConsultaExternaService {
 		return info;
 	}
 	
-	private List<Periodos> generarLista(Periodos periodoFinal){
-		List<Periodos> listaPeriodos = new ArrayList<>();
 		
-		for (int i = 1; i <= Integer.parseInt(periodoFinal.getId())-1; i++) {
-			Periodos periodo = new Periodos();
-			String NumeroLetras = obtenerNumeroLetras(i);
-			periodo.setId(String.valueOf(i));
-			periodo.setNombre(NumeroLetras);
-			listaPeriodos.add(periodo);
-		}
-		listaPeriodos.add(periodoFinal);
-		return listaPeriodos;
-	}
-	
-	private String obtenerNumeroLetras(int numero) {
-		switch (numero) {
-        case 1:
-            return "Primero";
-        case 2:
-            return "Segundo";
-        case 3:
-            return "Tercero";
-        case 4:
-            return "Cuarto";
-        case 5:
-            return "Quinto";
-        case 6:
-            return "Sexto";
-        case 7:
-            return "Septimo";
-        default:
-            return "Número Desconocido";            
-		}
-	}
-	
 	@Override
 	public PaginadoDTO consultaPaginadaEstudiantesPorInstitucion( int codigoInstitucion,
 			String codigoSede,

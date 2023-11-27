@@ -10,7 +10,7 @@ login:
 
 spring:
     profiles:
-        active: pruebased
+        active: linktic
     datasource:
         driver-class-name: oracle.jdbc.OracleDriver
         password: pruebas
@@ -59,7 +59,7 @@ clave:
 config:
     header: Access-Control-Allow-Headers, Content-Type, Authorization, 'Access-Control-Allow-Origin', 'Access-Control-Allow-Credentials'
     methods: GET, POST, PUT, DELETE, OPTIONS
-    origins: http://localhost:4200, https://localhost:4200, https://pruebas-sed.linktic.com:8080, http://localhost:8080, http://54.208.141.162:8080, http://localhost:4200, http://172.16.70.20:1910, http://172.16.70.11:7633, https://pruebas-sed.linktic.com, https://apoyopruebas.educacionbogota.edu.co, https://apoyofab.educacionbogota.edu.co, https://apoyoescolar.educacionbogota.edu.co
+    origins: http://localhost:4200, https://localhost:4200, https://pruebas-sed.linktic.com:8080, http://localhost:8080, http://54.208.141.162:8080, http://localhost:4200, http://172.16.70.20:1910, http://172.16.70.11:7633, https://pruebas-sed.linktic.com, https://apoyopruebas.educacionbogota.edu.co, https://apoyofab.educacionbogota.edu.co, https://apoyoescolar.educacionbogota.edu.co, http://172.16.70.11:7633, http://172.16.70.11
 
 email:
     body: <html><body><h2>Estimad@ Concursante</h2><br /><br /><p>Por medio del presente nos permitimos notificarle que ha sido aceptado para participar en el concurso. Para terminar con los datos de registro por favor ingrese al siguiente <a href="https://apoyoescolar.educacionbogota.edu.co/apoyo_escolar/Inicio.dos">enlace</a> con su correo electr&oacute;nico institucional y la contrase&ntilde;a de este, all&iacute; podr&aacute; culminar el diligenciamiento del formulario para terminar su inscripci&oacute;n.</p><br /><br /><p>Atentamente,</p><br /><p>SED</p></body></html>

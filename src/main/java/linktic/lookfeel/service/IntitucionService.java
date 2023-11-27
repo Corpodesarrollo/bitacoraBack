@@ -5,23 +5,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import linktic.lookfeel.dtos.*;
 import linktic.lookfeel.model.Institucion;
 import linktic.lookfeel.repositories.InstitucionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import linktic.lookfeel.ImageToBase64Converter;
-import linktic.lookfeel.dtos.AccesoDirectoPorPerfilDTO;
-import linktic.lookfeel.dtos.DependenciaDTO;
-import linktic.lookfeel.dtos.FotoDTO;
-import linktic.lookfeel.dtos.InstitucionDTO;
-import linktic.lookfeel.dtos.JornadaDTO;
-import linktic.lookfeel.dtos.LocalidadDTO;
-import linktic.lookfeel.dtos.PerfilDTO;
-import linktic.lookfeel.dtos.RegistroDTO;
-import linktic.lookfeel.dtos.ResponseInsitucionDTO;
-import linktic.lookfeel.dtos.SedeDTO;
-import linktic.lookfeel.dtos.grupoServicioDTO;
 import linktic.lookfeel.repositories.AccesoDirectoRepository;
 import linktic.lookfeel.repositories.PerfilRepository;
 import linktic.lookfeel.security.repositories.GrupoServicioRepository;
@@ -51,6 +41,19 @@ public class IntitucionService implements IInstitucionService {
 	@Autowired
 	private IFotoService fotoService;
 
+
+	@Override
+	public ResponseEscudoDTO getEscudoInstitucion(Long codigoColegio){
+		ResponseEscudoDTO responseEscudoDTO = new ResponseEscudoDTO();
+		try {
+			Long codigoDane = this.perfilRepository.getByCodInstitucion(codigoColegio);
+			if (codigoDane != null) responseEscudoDTO.setFoto_escudo(fotoService.getEscudo(codigoDane.toString()));
+		} catch (Exception e) {
+			System.out.println("Error al retornar el escudo de la institución");
+			e.printStackTrace();
+		}
+		return responseEscudoDTO;
+	}
 
 	@Override
 	public ResponseInsitucionDTO getInsitucionesByPersona(String idPersona) {
@@ -101,13 +104,7 @@ public class IntitucionService implements IInstitucionService {
 
 
 					if (regData[4] != null) {
-						try {
-							Long codigoDane = this.perfilRepository.getByCodInstitucion(Long.parseLong(String.valueOf(regData[4])));
-							System.out.println("1. Se tiene regData para trabajar colegio de imagen codigo dane12 : " + codigoDane );
-							if (codigoDane != null) fotoDTO = fotoService.getEscudo(codigoDane.toString());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+
 
 						// Se cargan datos de la LOCALIDAD DE LA INSTITUCION
 						if (regData[6] != null) {

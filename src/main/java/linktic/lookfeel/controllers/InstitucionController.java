@@ -2,6 +2,7 @@ package linktic.lookfeel.controllers;
 
 import java.util.List;
 
+import linktic.lookfeel.dtos.ResponseEscudoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,13 @@ public class InstitucionController {
 	@GetMapping(value = "/usuarios/{id}/info-usuario", produces = "application/json")
 	public ResponseEntity<?> obtenerInstituciones(@PathVariable("id") String ipPersona) {
 		ResponseInsitucionDTO responseInsitucionDTO = iInstitucionService.getInsitucionesByPersona(ipPersona);
+
+		return ResponseEntity.ok().body(responseInsitucionDTO);
+	}
+
+	@GetMapping(value = "/colegio/{id}/escudo", produces = "application/json")
+	public ResponseEntity<?> obtenerInstituciones(@PathVariable("id") Long codigoColegio) {
+		ResponseEscudoDTO responseInsitucionDTO = iInstitucionService.getEscudoInstitucion(codigoColegio);
 
 		return ResponseEntity.ok().body(responseInsitucionDTO);
 	}

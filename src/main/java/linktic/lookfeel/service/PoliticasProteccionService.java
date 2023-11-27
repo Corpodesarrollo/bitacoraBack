@@ -128,8 +128,7 @@ public class PoliticasProteccionService implements IPoliticasProteccionService {
 			Long uVersion = politicasProteccionRepository.ultimaVersion();
 			politica.setContenido(datosPolitica.getContenido());
 			politica.setVersion(uVersion == null ? 1: uVersion + 1);
-			ZoneId zonaHorariaColombia = ZoneId.of("America/Bogota");
-			politica.setFecha(LocalDate.now(zonaHorariaColombia));
+			politica.setFecha(LocalDate.now());
 			politica.setTipoPolitica("POLITICA_USO");
 			politica.setHabilitado(1L);
 			politicasProteccionRepository.save(politica);
@@ -183,8 +182,7 @@ public class PoliticasProteccionService implements IPoliticasProteccionService {
 			aceptacion.setAceptada(datosAceptacion.aceptada? 1L : 0L);
 			aceptacion.setReenviar(0L);
 			DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm:ss");
-			ZoneId zonaHorariaColombia = ZoneId.of("America/Bogota");
-			aceptacion.setFechaAceptacion(LocalDateTime.now(zonaHorariaColombia));
+			aceptacion.setFechaAceptacion(LocalDateTime.now());
 			
 			aceptacionPoliticasRepository.save(aceptacion);
 			log.info("Respuesta Exitosa al registrar aceptación de  politica de uso.");

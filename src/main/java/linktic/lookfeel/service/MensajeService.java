@@ -53,8 +53,7 @@ public class MensajeService implements IMensajeService {
 	private static final Logger log = LoggerFactory.getLogger(MensajeService.class);
 
 	DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
-	ZoneId zonaHorariaColombia = ZoneId.of("America/Bogota");
-	LocalDate fechaActual = LocalDate.now(zonaHorariaColombia);
+
 	Calendar calendar = Calendar.getInstance();
 
 	@Autowired
@@ -549,7 +548,7 @@ public class MensajeService implements IMensajeService {
 						nuevoMensaje);
 			} else {
 				return new Response(HttpStatus.BAD_REQUEST.value(),
-						"Se ha generado un error al enviar los datos para la creación del mensaje, por favor verifica que todos los datos sean correctos de ser así y el error persiste, comunícate con el administrador del sistema.", null);
+						"Se ha generado un error al enviar los datos para la creación del mensaje. Por favor, verifica que todos los datos sean correctos. De ser así y si el error persiste, comunícate con el administrador del sistema.", null);
 			}
 		} else {
 			log.error("Usuario no tiene permisos para enviar mensajes.");
@@ -723,7 +722,7 @@ public class MensajeService implements IMensajeService {
 			if (bandera == 0) {
 				nuevoMensaje.setMsjCodigo(secuencia);
 				estado = (long) 3;
-				nuevoMensaje.setMsjFecha(FormateoDeFechas(fechaActual));
+				nuevoMensaje.setMsjFecha(FormateoDeFechas(LocalDate.now()));
 				List<Integer> jerarquia = validarNivel(perfilId);
 
 				int minimo = jerarquia.get(0);
@@ -741,6 +740,7 @@ public class MensajeService implements IMensajeService {
 			} else {
 
 				nuevoMensaje.setMsjCodigo(id);
+				nuevoMensaje.setMsjFecha(oldmensaje.getMsjFecha());
 				estado = (long) 0;
 
 				nuevoMensaje.setMsjEnviadoPor(oldmensaje.getMsjEnviadoPor());
