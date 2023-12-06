@@ -12,10 +12,10 @@ import linktic.lookfeel.model.PoliticasProteccion;
 public interface AceptacionPoliticasRepository extends JpaRepository<AceptacionPoliticas, Long> {
 	
 	@Query(nativeQuery = true, value = "SELECT\r\n"
-			+ "    ap.USULOGIN, CONCAT(per.PERNOMBRE1,per.PERNOMBRE2) nombres,\r\n"
-			+ "    CONCAT(per.PERAPELLIDO1,per.PERAPELLIDO2) apellidos,\r\n"
+			+ "    ap.USULOGIN, per.PERNOMBRE1 || ' ' ||per.PERNOMBRE2 nombres,\r\n"
+			+ "    per.PERAPELLIDO1 || ' ' || per.PERAPELLIDO2 apellidos,\r\n"
 			+ "    MAX(CASE WHEN p.CODIGO_TIPO = 'POLITICA_USO' THEN ap.ACEPTADA ELSE NULL END) AS aceptaUso,\r\n"
-			+ "    MAX(CASE WHEN p.CODIGO_TIPO = 'DATOS_PERSONALES' THEN ap.ACEPTADA ELSE NULL END) AS aceptaDatos\r\n"
+			+ "    MAX(CASE WHEN (p.CODIGO_TIPO = 'DATOS_PERSONALES') and (ap.REENVIAR = 0) THEN ap.ACEPTADA ELSE NULL END) AS aceptaDatos\r\n"
 			+ "FROM ACEPTACION_POLITICAS ap\r\n"
 			+ "    LEFT JOIN POLITICA_PROTECCION_DATOS p ON ap.IDPOLITICA = p.ID\r\n"
 			+ "    LEFT JOIN PERSONAL per ON ap.USULOGIN = per.PERNUMDOCUM\r\n"

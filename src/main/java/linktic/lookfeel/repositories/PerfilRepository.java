@@ -244,7 +244,7 @@ public interface PerfilRepository extends JpaRepository<Perfil, Long>{
 	@Query(value = "Select USUPASSWORDTEMPORAL from usuario where USUPERNUMDOCUM=:numeroIdentificacion ", nativeQuery = true)
 	String findPassTemp (String numeroIdentificacion);
 	
-	@Query(value = "Select perfil.* from perfil where perfcodigo in (110,410,420,421,422,423,424,460) order by perfnombre ASC", nativeQuery = true)
+	@Query(value = "Select perfil.* from perfil where perfcodigo in (410,420,421,422,423,424,460) order by perfnombre ASC", nativeQuery = true)
 	List<Perfil> findPerfilesAsc();
 	
 	@Query(nativeQuery = true, value = "select distinct perfil.perfcodigo AS perfilId\r\n"

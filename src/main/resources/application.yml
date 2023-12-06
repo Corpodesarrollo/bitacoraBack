@@ -84,6 +84,7 @@ nivel:
     maximo:
         jerarquia: 5
 office:
+    userinfo_url: https://graph.microsoft.com/oidc/userinfo
     client_id: 5325b763-d2ea-40a6-bd0b-dbe293790ee4
     client_id_edu: 1a826e8e-9af6-4381-be8a-fe0cef5a60cd
     client_secret: t1b8Q~CcgefKykdvBfaER.wqN9-bXAJQllh6PbNp

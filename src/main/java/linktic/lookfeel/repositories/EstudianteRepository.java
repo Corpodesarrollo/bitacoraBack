@@ -31,7 +31,7 @@ public interface EstudianteRepository extends JpaRepository<Estudiante, Long> {
 			+ "		  FROM g_jerarquia jer "
 			+ "		 INNER JOIN estudiante est ON jer.G_JERCODIGO = est.ESTGRUPO "
 			+ "		 INNER JOIN grupo gru ON jer.G_JERCODIGO = gru.GRUJERGRUPO   "
-			+ "		 INNER JOIN grado gra ON jer.G_JERGRADO = gra.GRACODIGO AND jer.G_JERINST = gra.GRACODINST "
+			+ "		 INNER JOIN grado gra ON jer.G_JERGRADO = gra.GRACODIGO AND jer.G_JERINST = gra.GRACODINST AND jer.G_JERMETOD = gra.GRACODMETOD "
 			+ "		 INNER JOIN g_constante consJor ON consJor.G_CONTIPO = 5 AND jer.G_JERJORN = consJor.G_CONCODIGO "
 			+ "		 INNER JOIN sede s ON jer.G_JERSEDE = s.SEDCODIGO AND jer.G_JERINST = s.SEDCODINS AND s.SEDESTADO = 'A' "
 			+ "		 WHERE jer.G_JERTIPO = 1  "
@@ -48,7 +48,7 @@ public interface EstudianteRepository extends JpaRepository<Estudiante, Long> {
 			+ "		  FROM g_jerarquia jer "
 			+ "		 INNER JOIN estudiante est ON jer.G_JERCODIGO = est.ESTGRUPO "
 			+ "		 INNER JOIN grupo gru ON jer.G_JERCODIGO = gru.GRUJERGRUPO   "
-			+ "		 INNER JOIN grado gra ON jer.G_JERGRADO = gra.GRACODIGO AND jer.G_JERINST = gra.GRACODINST "
+			+ "		 INNER JOIN grado gra ON jer.G_JERGRADO = gra.GRACODIGO AND jer.G_JERINST = gra.GRACODINST AND jer.G_JERMETOD = gra.GRACODMETOD "
 			+ "		 INNER JOIN g_constante consJor ON consJor.G_CONTIPO = 5 AND jer.G_JERJORN = consJor.G_CONCODIGO "
 			+ "		 INNER JOIN sede s ON jer.G_JERSEDE = s.SEDCODIGO AND jer.G_JERINST = s.SEDCODINS AND s.SEDESTADO = 'A' "
 			+ "		 WHERE jer.G_JERTIPO = 1  "
@@ -65,8 +65,7 @@ public interface EstudianteRepository extends JpaRepository<Estudiante, Long> {
 			+ "			   AND jer.G_JERINST = i.INSCODIGO   "
 			+ "			   AND G_JerTipo=1 and G_JerNivel=8  "
 			+ "			   AND ((:codigoLocalidad > 0 AND i.INSCODLOCAL = :codigoLocalidad) OR (:codigoLocalidad <= 0 AND i.INSCODLOCAL > 0))   "
-			+ "			  GROUP BY i.INSNOMBRE, jer.G_JERINST  "
-			+ "			  ORDER BY i.INSNOMBRE) ")
+			+ "			  GROUP BY i.INSNOMBRE, jer.G_JERINST) ")
 	List<Object[]> consultaTotalRegNumEstudiantesPorInstituto(int codigoLocalidad);
 	
 	@Query(nativeQuery = true, value = "SELECT id_localidad, localidad, institucion, estudiantes   "
@@ -79,7 +78,7 @@ public interface EstudianteRepository extends JpaRepository<Estudiante, Long> {
 			+ "							    AND i.INSCODLOCAL = l.LC_CODI_ID "
 			+ "						        AND ((:codigoLocalidad > 0 AND i.INSCODLOCAL = :codigoLocalidad) OR (:codigoLocalidad <= 0 AND i.INSCODLOCAL > 0))  "
 			+ "						      GROUP BY i.INSNOMBRE, jer.G_JERINST, l.lc_codi_id, l.lc_nomb "
-			+ "						      ORDER BY i.INSNOMBRE) tbl1) "
+			+ "						      ORDER BY NLSSORT(l.lc_nomb,'NLS_SORT=XSpanish'), NLSSORT(i.INSNOMBRE,'NLS_SORT=XSpanish')) tbl1) "
 			+ "			  WHERE num_reg BETWEEN (((:numPagina - 1) * :numRegPorPagina) + 1) AND (:numPagina * :numRegPorPagina)")
 	List<Object[]> consultaPaginadaNumEstudiantesPorInstituto(int codigoLocalidad, int numPagina, int numRegPorPagina);
 }

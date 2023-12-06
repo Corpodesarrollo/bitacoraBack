@@ -48,6 +48,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         PATH_PERMIT_NO_AUTH.add("listaDocumentosIdentidad");
         PATH_PERMIT_NO_AUTH.add("consultas/estudiante");
         PATH_PERMIT_NO_AUTH.add("apoyo/seguridad");
+        PATH_PERMIT_NO_AUTH.add("seguridad/usuarios");
+        PATH_PERMIT_NO_AUTH.add("seguridad/azure-validate");
     }
 
     /* (non-Javadoc)

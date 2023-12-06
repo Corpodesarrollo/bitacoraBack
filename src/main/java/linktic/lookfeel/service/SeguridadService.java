@@ -142,12 +142,12 @@ public class SeguridadService implements ISeguridadService {
 
 			} else {
 				return new Response(HttpStatus.BAD_REQUEST.value(),
-						"El usuario ingresado no tiene correo electrónico asignado para iniciar el proceso de cambio de contraseña. Comunícate con el administrador para verificar la información del usuario.",
+						"El usuario ingresado no tiene correo electrónico asignado para iniciar el proceso de cambio de contraseña. Le recomendamos que se comunique con el administrador para verificar la información del usuario.",
 						null);
 			}
 		} else {
 			return new Response(HttpStatus.BAD_REQUEST.value(),
-					"El número de documento del usuario no se encuentra registrado en el sistema. Comunícate con el administrador para verificar la información del usuario.", null);
+					"El número de documento ingresado no se encuentra registrado en el sistema. Le recomendamos que se comunique con el administrador para verificar la información del usuario.", null);
 		}
 		return new Response(HttpStatus.OK.value(),
 				"Informamos que se ha enviado una contraseña temporal de un solo uso a la siguiente"

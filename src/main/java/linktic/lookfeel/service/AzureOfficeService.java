@@ -2,6 +2,8 @@ package linktic.lookfeel.service;
 
 import java.io.IOException;
 
+import linktic.lookfeel.dtos.*;
+import linktic.lookfeel.security.components.AzureAuthException;
 import linktic.lookfeel.security.services.ISecurityService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +14,6 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import linktic.lookfeel.ImageToBase64Converter;
-import linktic.lookfeel.dtos.FotoDTO;
-import linktic.lookfeel.dtos.PerfilDTO;
-import linktic.lookfeel.dtos.ReponseUsuarioLoginDTO;
-import linktic.lookfeel.dtos.ResponseAzure;
-import linktic.lookfeel.dtos.ResponseAzureData;
-import linktic.lookfeel.dtos.ResponseLoginDTO;
-import linktic.lookfeel.dtos.UsuarioAzureDTO;
-import linktic.lookfeel.dtos.UsuarioDTO;
 import linktic.lookfeel.model.Perfil;
 import linktic.lookfeel.model.Personal;
 import linktic.lookfeel.repositories.PerfilRepository;
@@ -33,7 +27,11 @@ import okhttp3.Response;
 @Service
 public class AzureOfficeService implements IAzureOfficeService {
 
-	private static final int CODERESPONSEOFFICE = 200;
+    private static final int CODERESPONSEOFFICE = 200;
+
+    private static final String HEADER_AUTH = "Authorization";
+    private static final String HEADER_CONTENT_TYPE = "Content-Type";
+
 
 	@Value("${office.client_secret}")
 	private String client_secret;
@@ -59,8 +57,11 @@ public class AzureOfficeService implements IAzureOfficeService {
 	@Value("${office.client_id_edu}")
 	private String client_id_edu;
 
-	@Value("${office.email.validate.edu}")
-	private String edu_co;
+    @Value("${office.email.validate.edu}")
+    private String edu_co;
+
+    @Value("${office.userinfo_url}")
+    private String userInfoUrlMicrosoft;
 
 	@Value("${office.email.validate.gov}")
 	private String gov_co;
@@ -232,7 +233,7 @@ public class AzureOfficeService implements IAzureOfficeService {
 	 * @param email
 	 * @return UsuarioAzureDTO
 	 */
-	private UsuarioAzureDTO getDataUserAzure(String token, String email) {
+	public UsuarioAzureDTO getDataUserAzure(String token, String email) {
 		ResponseAzureData responseAzureData = null;
 		UsuarioAzureDTO usuarioOffice = new UsuarioAzureDTO();
 		OkHttpClient client = new OkHttpClient().newBuilder().build();
@@ -258,6 +259,30 @@ public class AzureOfficeService implements IAzureOfficeService {
 		}
 		return usuarioOffice;
 	}
+
+
+    @Override
+    public ResponseAzureUserDataDTO getUserInfoAndValidToken(String token, String email) throws AzureAuthException {
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        Request request = new Request.Builder().url(userInfoUrlMicrosoft).get()
+                .addHeader(HEADER_CONTENT_TYPE, "application/json")
+                .addHeader(HEADER_AUTH, "Bearer " + token).build();
+        try {
+            Response response = client.newCall(request).execute();
+            ObjectMapper mapper = new ObjectMapper();
+            if (response.code() == CODERESPONSEOFFICE) {
+                ResponseAzureUserDataDTO responseAzureUserDataDTO = mapper.readValue(response.body().byteStream(), ResponseAzureUserDataDTO.class);
+                if (responseAzureUserDataDTO == null || !email.contains(responseAzureUserDataDTO.getEmail()))
+                    throw new AzureAuthException("Error en validación de token office");
+                else
+                    return responseAzureUserDataDTO;
+            } else {
+                throw new AzureAuthException("Error en validación de token office");
+            }
+        } catch (IOException e) {
+            throw new AzureAuthException("Error al validar el token ");
+        }
+    }
 
 	@Override
 	public ReponseUsuarioLoginDTO getDataUserByEmailOfficeEncriptado(String email) throws Exception {

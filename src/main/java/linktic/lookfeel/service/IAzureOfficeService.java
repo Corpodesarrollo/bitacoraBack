@@ -1,7 +1,9 @@
 package linktic.lookfeel.service;
 
 import linktic.lookfeel.dtos.ReponseUsuarioLoginDTO;
+import linktic.lookfeel.dtos.ResponseAzureUserDataDTO;
 import linktic.lookfeel.dtos.ResponseLoginDTO;
+import linktic.lookfeel.security.components.AzureAuthException;
 
 /**
  * 
@@ -30,4 +32,5 @@ public interface IAzureOfficeService {
 	 */
 	public ReponseUsuarioLoginDTO getDataUserByEmailOfficeEncriptado(String email) throws Exception;
 
+	ResponseAzureUserDataDTO getUserInfoAndValidToken(String token, String email) throws AzureAuthException;
 }
