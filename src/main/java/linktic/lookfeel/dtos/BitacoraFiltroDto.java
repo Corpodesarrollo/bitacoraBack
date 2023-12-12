@@ -14,6 +14,15 @@ public class BitacoraFiltroDto {
 	private String descripcion = "";
 	private int paginaActual;
 	private int itemsPagina;
+	private String ordenar;
+	
+	public String getOrdenar() {
+		return ordenar;
+	}
+	public void setOrdenar(String ordenar) {
+		this.ordenar = ordenar;
+	}
+	
 	public Date getFechaInicio() {
 		return fechaInicio;
 	}

@@ -166,14 +166,12 @@ public class BitacoraService implements IBitacoraService{
 	@Override
 	public Response obtenerColegios(ColegioFiltroDto colegio) {
 		int nivelPerfil = usuarioRepository.nivelUsuario(colegio.getUsuario());
-		long localidad = usuarioRepository.localidadUsuario(colegio.getUsuario());
-		long institucion = usuarioRepository.institucionUsuario(colegio.getUsuario());
-		
 		List<Institucion> colegios = new ArrayList<>();
-		
-		if(nivelPerfil ==1) {
-			colegios = institucionRepository.findByLocalidadInstitucions(localidad);
+		if(nivelPerfil == 1) {
+			colegios = institucionRepository.findByDepartamento(25L);
 		}else if(nivelPerfil ==6){
+			//long localidad = usuarioRepository.localidadUsuario(colegio.getUsuario());
+			long institucion = usuarioRepository.institucionUsuario(colegio.getUsuario());
 			colegios.add(institucionRepository.findByCodigo(institucion));
 		}
 		
@@ -212,8 +210,14 @@ public class BitacoraService implements IBitacoraService{
 		// TODO Auto-generated method stub
 		Pageable page = PageRequest.of(bitacora.getPaginaActual(), bitacora.getItemsPagina());
 		String descripcion = "%"+bitacora.getDescripcion()+"%";
-		List<Bitacora> bitacoras = bitacoraRepository.consultaBitacora(bitacora.getFechaInicio(), bitacora.getFechaFin(), bitacora.getUsuario(), bitacora.getColegio(), bitacora.getSede(), bitacora.getJornada(),
-				bitacora.getTipoLogBitacora(), descripcion, page);
+		List<Bitacora> bitacoras = new ArrayList<>(); 
+		if (bitacora.getOrdenar().equals("ASC")) {
+			bitacoras = bitacoraRepository.consultaBitacoraASC(bitacora.getFechaInicio(), bitacora.getFechaFin(), bitacora.getUsuario(), bitacora.getColegio(), bitacora.getSede(), bitacora.getJornada(),
+					bitacora.getTipoLogBitacora(), descripcion, page);	
+		} else {
+			bitacoras = bitacoraRepository.consultaBitacoraDESC(bitacora.getFechaInicio(), bitacora.getFechaFin(), bitacora.getUsuario(), bitacora.getColegio(), bitacora.getSede(), bitacora.getJornada(),
+					bitacora.getTipoLogBitacora(), descripcion, page);
+		}
 		Integer total = bitacoraRepository.totalResgistrosFiltro(bitacora.getFechaInicio(), bitacora.getFechaFin(), bitacora.getUsuario(), bitacora.getColegio(), bitacora.getSede(), bitacora.getJornada(),
 				bitacora.getTipoLogBitacora(), descripcion);
 		for (Bitacora bitacora2 : bitacoras) {

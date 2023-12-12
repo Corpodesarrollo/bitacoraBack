@@ -20,7 +20,18 @@ public interface BitacoraRepository extends PagingAndSortingRepository<Bitacora,
 			+ " and (:jornada = 0 or b.jornada = :jornada)"
 			+ " and (:tipoLogBitacora = 0 or b.tipo_log_bitacora = :tipoLogBitacora)"
 			+ " and b.descripcion like :descripcion ORDER BY b.FECHA_REGISTRO ASC")
-	List<Bitacora> consultaBitacora(Date fechaInicio,Date fechaFin,String usuario,Long colegio,Long sede,Long jornada,Long tipoLogBitacora,String descripcion, Pageable pageable);
+	List<Bitacora> consultaBitacoraASC(Date fechaInicio,Date fechaFin,String usuario,Long colegio,Long sede,Long jornada,Long tipoLogBitacora,String descripcion, Pageable pageable);
+	
+	@Query(nativeQuery = true, value = "SELECT b.*"
+			+ " from bitacora b"
+			+ " where (b.fecha_registro between :fechaInicio and :fechaFin)"
+			+ " and (:usuario IS NULL or b.usuario = :usuario)"
+			+ " and (:colegio = 0 or b.colegio = :colegio)"
+			+ " and (:sede = 0 or b.sede = :sede)"
+			+ " and (:jornada = 0 or b.jornada = :jornada)"
+			+ " and (:tipoLogBitacora = 0 or b.tipo_log_bitacora = :tipoLogBitacora)"
+			+ " and b.descripcion like :descripcion ORDER BY b.FECHA_REGISTRO DESC")
+	List<Bitacora> consultaBitacoraDESC(Date fechaInicio,Date fechaFin,String usuario,Long colegio,Long sede,Long jornada,Long tipoLogBitacora,String descripcion, Pageable pageable);
 	
 	@Query(nativeQuery = true, value = "SELECT count(*)"
 			+ " from bitacora b"

@@ -23,6 +23,9 @@ public interface InstitucionRepository extends JpaRepository<Institucion, Long>{
 	@Query(nativeQuery = true, value = "Select * from institucion i where i.inscodlocal =:localidad order by 1 desc")
 	List<Institucion> findByLocalidadInstitucions(Long localidad);
 	
+	@Query(nativeQuery = true, value = "Select * from institucion i where i.inscoddepto =:departamento order by 1 desc")
+	List<Institucion> findByDepartamento(Long departamento);
+	
 	
 
 }
