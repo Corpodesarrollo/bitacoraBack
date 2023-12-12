@@ -19,7 +19,7 @@ public interface BitacoraRepository extends PagingAndSortingRepository<Bitacora,
 			+ " and (:sede = 0 or b.sede = :sede)"
 			+ " and (:jornada = 0 or b.jornada = :jornada)"
 			+ " and (:tipoLogBitacora = 0 or b.tipo_log_bitacora = :tipoLogBitacora)"
-			+ " and b.descripcion like :descripcion ")
+			+ " and b.descripcion like :descripcion ORDER BY b.FECHA_REGISTRO ASC")
 	List<Bitacora> consultaBitacora(Date fechaInicio,Date fechaFin,String usuario,Long colegio,Long sede,Long jornada,Long tipoLogBitacora,String descripcion, Pageable pageable);
 	
 	@Query(nativeQuery = true, value = "SELECT count(*)"

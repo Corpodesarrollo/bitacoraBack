@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -59,6 +60,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.imageio.ImageIO;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
 *
@@ -137,7 +139,8 @@ public class BitacoraService implements IBitacoraService{
 	@Override
 	public Response obtenerUsuarios(UsuarioFiltroDto usuario) {
 		List<Personal> personal=new ArrayList<>();
-		List<ComboDto> lista = new ArrayList<>();
+		//List<ComboDto> lista = new ArrayList<>();
+		Set<ComboDto> lista = new HashSet<ComboDto>();
 		
 		if(usuario.getNivelPerfil()==6 || usuario.getNivelPerfil()==4) {
 			personal = personalRepository.getUsuarioXInstutucion(usuario.getInstitucion());			
@@ -153,7 +156,10 @@ public class BitacoraService implements IBitacoraService{
 			c.setNombre(p.getPernombre1()+" "+(p.getPernombre2()==null?"":p.getPernombre2())+" "+p.getPerapellido1()+" "+(p.getPerapellido2()==null?"":p.getPerapellido2()));
 			lista.add(c);	
 		}
-		
+		ComboDto xc = new ComboDto();
+		xc.setCodigo(null);
+		xc.setNombre("TODOS");
+		lista.add(xc);
 		return new Response(HttpStatus.OK.value(), "Usuarios consultados correctamente", lista);
 	}
 
@@ -269,14 +275,15 @@ public class BitacoraService implements IBitacoraService{
 				result.append(this.Tildar(key.toString()) + ": " + map.get(key) + "\n");
 		    }
 		} else if(descripcion.charAt(0)=='[') {
-			List<Map<Object, Object>> list = new ObjectMapper().readValue(descripcion, new TypeReference<List<Map<Object,Object>>>(){});
-			for (Map<Object, Object> map : list) {
-				for (Object key : map.keySet()) {
-					result.append(this.Tildar(key.toString()) + ": " + map.get(key) + "\n");
+			if (descripcion.charAt(1)=='{') {
+				List<Map<Object, Object>> list = new ObjectMapper().readValue(descripcion, new TypeReference<List<Map<Object,Object>>>(){});
+				for (Map<Object, Object> map : list) {
+					for (Object key : map.keySet()) {
+						result.append(this.Tildar(key.toString()) + ": " + map.get(key) + "\n");
+					}
+					result.append("\n");
 				}
-				result.append("\n");
 			}
-			
 		}
 		return result.toString();
 	}
