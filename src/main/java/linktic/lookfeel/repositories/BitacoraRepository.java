@@ -32,4 +32,7 @@ public interface BitacoraRepository extends PagingAndSortingRepository<Bitacora,
 			+ " and (:tipoLogBitacora = 0 or b.tipo_log_bitacora = :tipoLogBitacora)"
 			+ " and b.descripcion like :descripcion ")
 	Integer totalResgistrosFiltro(Date fechaInicio,Date fechaFin,String usuario,Long colegio,Long sede,Long jornada,Long tipoLogBitacora,String descripcion);
+	
+	@Query(nativeQuery = true, value = "SELECT p.PERFNOMBRE FROM PERFIL p WHERE p.PERFCODIGO = :idPerfil FETCH NEXT 1 ROWS ONLY")
+	String consultarNomPerfil(Long idPerfil); 
 }

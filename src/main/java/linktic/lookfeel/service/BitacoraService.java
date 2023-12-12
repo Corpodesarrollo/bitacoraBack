@@ -49,6 +49,7 @@ import linktic.lookfeel.repositories.SedeRepository;
 import linktic.lookfeel.repositories.TipoLogRepository;
 import linktic.lookfeel.security.repositories.UsuarioRepository;
 import linktic.lookfeel.util.Utilidades;
+import net.bytebuddy.asm.Advice.This;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -211,6 +212,8 @@ public class BitacoraService implements IBitacoraService{
 				bitacora.getTipoLogBitacora(), descripcion);
 		for (Bitacora bitacora2 : bitacoras) {
 			bitacora2.setTotalPag(total);
+			String nomPerfil = bitacoraRepository.consultarNomPerfil(bitacora2.getPerfil());
+			bitacora2.setNomPerfil(nomPerfil);
 		}
 		
 		return new Response(HttpStatus.OK.value(), "Bitacora consultada correctamente", bitacoras);
@@ -263,13 +266,13 @@ public class BitacoraService implements IBitacoraService{
 		if(descripcion.charAt(0)=='{') {
 			Map<Object,Object> map = new ObjectMapper().readValue(descripcion, HashMap.class);
 			for (Object key : map.keySet()) {
-				result.append(key.toString() + ": " + map.get(key) + "\n");
+				result.append(this.Tildar(key.toString()) + ": " + map.get(key) + "\n");
 		    }
 		} else if(descripcion.charAt(0)=='[') {
 			List<Map<Object, Object>> list = new ObjectMapper().readValue(descripcion, new TypeReference<List<Map<Object,Object>>>(){});
 			for (Map<Object, Object> map : list) {
 				for (Object key : map.keySet()) {
-					result.append(key.toString() + ": " + map.get(key) + "\n");
+					result.append(this.Tildar(key.toString()) + ": " + map.get(key) + "\n");
 				}
 				result.append("\n");
 			}
@@ -278,5 +281,14 @@ public class BitacoraService implements IBitacoraService{
 		return result.toString();
 	}
 	
+	private String Tildar(String texto) {
+		String newStr = texto;
+		String[] con = {"Á", "É", "Í", "Ó", "Ú", "Ý", "á", "é", "í", "ó", "ú", "ý", "Ã", "Ñ", "Õ", "ã", "ñ", "õ"};
+		String[] sin = {"&Aacute;", "&Eacute;", "&Iacute;", "&Oacute;", "&Uacute;", "&Yacute;", "&aacute;", "&eacute;", "&iacute;", "&oacute;", "&uacute;", "&yacute;", "&Atilde;", "&Ntilde;", "&Otilde;", "&atilde;", "&ntilde;", "&otilde;"};
+		for(int index = 0; index < sin.length; index++) {
+			newStr = newStr.replaceAll(sin[index], con[index]);
+		}
+		return newStr;
+	}
 	
 }

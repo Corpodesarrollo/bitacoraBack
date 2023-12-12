@@ -51,6 +51,9 @@ public class Bitacora {
 		
 		@Transient
 	    private int totalPag;
+		
+		@Transient
+	    private String nomPerfil;
 
 		public Long getId() {
 			return id;
@@ -146,5 +149,13 @@ public class Bitacora {
 
 		public void setTotalPag(int totalPag) {
 			this.totalPag = totalPag;
+		}
+		
+		public String getNomPerfil() {
+			return this.nomPerfil;
+		}
+
+		public void setNomPerfil(String nomPerfil) {
+			this.nomPerfil = nomPerfil;
 		}
 }
